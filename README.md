@@ -11,6 +11,8 @@ To use Pyscape you will need:
 
 [NBED instructions]
 
+### Examples
+
 ## Available API calls
 
 ### `links`
@@ -26,10 +28,8 @@ Often use of the Mozscape API is an extension of working with [Open Site Explore
 I any case, given a URL the included ose.py uses the a Pyscape object to get the requisite data and formats it to match OSE output. Output filenames are determined by the input URL.
 
 ```bash
-cat urls.txt | ose.py
+ose.py [URL] [OUTPUT]
 ```
-
-[NBED reality]
 
 ## Using free API credentials
 
@@ -37,4 +37,4 @@ cat urls.txt | ose.py
 
 ## Thanks
 
-The [SEOmoz team](http://www.seomoz.org/about/team) deserves a lot of credit for their work on creating a useful tool. If you're a dev looking for a great place to work, check them out. And tell them I sent you!
+The [SEOmoz team](http://www.seomoz.org/about/team) deserves a lot of credit for their work on creating a useful tool. If you're a dev looking for a great place to work, [check them out](http://www.seomoz.org/about/jobs). And tell them I sent you!
