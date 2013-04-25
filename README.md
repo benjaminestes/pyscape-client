@@ -22,13 +22,22 @@ Put your keys in a file called `keys.json` in the same directory as the script. 
 
 
 ```bash
-./pyscape.py [url|urls|list|ose] <resource> (outfile)
+./pyscape.py [url|urls] <resource> (outfile)
 
-    url: Return JSON string with social metrics for
-            the URL specified by <resource>. URL
-            must begin with "http://".
-    urls: Fill this in later.
-    list: Return a JSON file with social metrics for
+    url: NBED
+
+./pyscape.py [links] <resource> (outfile)
+
+    url: NBED
+
+./pyscape.py [anchors] <resource> (outfile)
+
+    url: NBED
+
+./pyscape.py [ose] <resource> (outfile)
+
+    url: NBED
+
 ```
 
 ### Examples
