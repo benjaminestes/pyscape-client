@@ -32,6 +32,7 @@ class TestCall(unittest.TestCase):
         self.assertEqual(a, b)
 
     def test_lcall(self):
+        # should now fail since links() uses multiple calls
         a = self.pys.call(Pyscape.L, self.url, self.l_params)
         b = self.pys.links(self.url)
         self.assertEqual(a, b)
@@ -40,6 +41,11 @@ class TestCall(unittest.TestCase):
         a = self.pys.call(Pyscape.U, self.url, self.u_params)
         b = self.pys.url_metrics(self.url)
         self.assertEqual(a, b)
+
+    def test_offset(self):
+        # test step feature combining link return data
+        # assumes 3 requests, limit 5 each, for 15 total
+        self.assertEqual(len(self.pys.links(self.url)),15)
 
 if __name__ == '__main__':
     unittest.main()

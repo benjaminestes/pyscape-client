@@ -34,40 +34,56 @@ class Pyscape:
         return json_data
 
     def anchor_text(self, url):
-        self.a_params = {'Scope': 'phrase_to_page',
+        a_params = {'Scope': 'phrase_to_page',
                          'Sort': 'domains_linking_page',
                          'Cols': 2}
         
-        return self.call(Pyscape.A, url, self.a_params)
+        return self.call(Pyscape.A, url, a_params)
 
     def links(self, url):
-        self.l_params = {'SourceCols': 4,
+        l_params = {'SourceCols': 4,
                          'TargetCols': 4,
                          'LinkCols': 2,
                          'Scope': 'page_to_domain',
                          'Sort': 'page_authority',
                          'Limit': 5,
                          'Offset': 0}
+        
+        data = []
+        offset = 0
+        step = 5
 
-        return self.call(Pyscape.L, url, self.l_params)
+        for i in range(3):
+            l_params['Offset'] = offset
+            data.extend(self.call(Pyscape.L, url, l_params))
+            offset = offset + step
+        
+        return data
 
     def url_metrics(self, url):
-        self.u_params = {'Cols': 4}
+        u_params = {'Cols': 4}
 
-        return self.call(Pyscape.U, url, self.u_params)
+        return self.call(Pyscape.U, url, u_params)
+
+    def bulk_metrics(self, urls):
+        data = []
+        for url in urls:
+            data.append(self.url_metrics(url))
+
+        return data
 
 def help():
     print("Placeholder.")
 
 def main():
     method = sys.argv[1] if len(sys.argv) > 1 else None
-    url = sys.argv[2] if len(sys.argv) > 2 else None
+    resource = sys.argv[2] if len(sys.argv) > 2 else None
 
     if not method:
         help()
         sys.exit()
 
-    if not url:
+    if not resource:
         help()
         exit('Invalid URL.')
 
@@ -77,10 +93,19 @@ def main():
     pys = Pyscape(key_string['access-id'], key_string['secret-key'])
     
     if method == 'url-metrics':
+        url = resource
         print(pys.url_metrics(url))
+    elif method == 'bulk-metrics':
+        urls = []
+        with open(resource, 'r') as j:
+            for line in j:
+                urls.append(line.rstrip())
+        print(pys.bulk_metrics(urls))
     elif method == 'links':
+        url = resource
         print(pys.links(url))
     elif method == 'anchor-text':
+        url = resource
         print(pys.anchor_text(url))
 
 if __name__ == '__main__':
