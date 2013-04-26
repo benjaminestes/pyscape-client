@@ -8,6 +8,8 @@ import base64
 
 class Pyscape:
     "Facilitate grabbing data from Mozscape API."
+    A = 'anchor-text'
+    L = 'links'
     U = 'url-metrics'
 
     def __init__(self, access_id, secret_key):
@@ -17,10 +19,6 @@ class Pyscape:
         self.auth = base64string.decode('utf-8') 
     
     def call(self, method, url, params = None, tries = 5):
-        # If no parameters specified, choose intelligent default
-        if not params:
-            params = {'Cols': 137438953471}
-
         query_string = '&'.join([k + '=' + urllib.parse.quote(str(v)) \
                                  for (k, v) in params.items()])
         
