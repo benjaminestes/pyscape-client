@@ -27,13 +27,19 @@ class TestCall(unittest.TestCase):
                            key_string['secret-key'])
 
     def test_acall(self):
-        self.pys.call(Pyscape.A, self.url, self.a_params)
+        a = self.pys.call(Pyscape.A, self.url, self.a_params)
+        b = self.pys.anchor_text(self.url)
+        self.assertEqual(a, b)
 
     def test_lcall(self):
-        self.pys.call(Pyscape.L, self.url, self.l_params)
+        a = self.pys.call(Pyscape.L, self.url, self.l_params)
+        b = self.pys.links(self.url)
+        self.assertEqual(a, b)
 
     def test_ucall(self):
-        self.pys.call(Pyscape.U, self.url, self.u_params)
+        a = self.pys.call(Pyscape.U, self.url, self.u_params)
+        b = self.pys.url_metrics(self.url)
+        self.assertEqual(a, b)
 
 if __name__ == '__main__':
     unittest.main()

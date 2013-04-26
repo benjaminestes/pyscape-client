@@ -33,17 +33,55 @@ class Pyscape:
 
         return json_data
 
+    def anchor_text(self, url):
+        self.a_params = {'Scope': 'phrase_to_page',
+                         'Sort': 'domains_linking_page',
+                         'Cols': 2}
+        
+        return self.call(Pyscape.A, url, self.a_params)
+
+    def links(self, url):
+        self.l_params = {'SourceCols': 4,
+                         'TargetCols': 4,
+                         'LinkCols': 2,
+                         'Scope': 'page_to_domain',
+                         'Sort': 'page_authority',
+                         'Limit': 5,
+                         'Offset': 0}
+
+        return self.call(Pyscape.L, url, self.l_params)
+
+    def url_metrics(self, url):
+        self.u_params = {'Cols': 4}
+
+        return self.call(Pyscape.U, url, self.u_params)
+
+def help():
+    print("Placeholder.")
+
 def main():
-    url = sys.argv[1] if len(sys.argv) > 1 else None
+    method = sys.argv[1] if len(sys.argv) > 1 else None
+    url = sys.argv[2] if len(sys.argv) > 2 else None
+
+    if not method:
+        help()
+        sys.exit()
 
     if not url:
+        help()
         exit('Invalid URL.')
 
     with open('keys.json', 'r') as k:
         key_string = json.load(k)
 
     pys = Pyscape(key_string['access-id'], key_string['secret-key'])
-    print(pys.call(Pyscape.U, url))
+    
+    if method == 'url-metrics':
+        print(pys.url_metrics(url))
+    elif method == 'links':
+        print(pys.links(url))
+    elif method == 'anchor-text':
+        print(pys.anchor_text(url))
 
 if __name__ == '__main__':
     sys.exit(main())
