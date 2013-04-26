@@ -31,6 +31,10 @@ class TestCall(unittest.TestCase):
         b = self.pys.anchor_text(self.url)
         self.assertEqual(a, b)
 
+    def test_atype(self):
+        a = self.pys.call(Pyscape.A, self.url, self.a_params)
+        self.assertIsInstance(type(a), list)
+
     def test_lcall(self):
         # should now fail since links() uses multiple calls
         a = self.pys.call(Pyscape.L, self.url, self.l_params)

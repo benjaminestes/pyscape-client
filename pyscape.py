@@ -5,6 +5,7 @@ import json
 import urllib.request
 import urllib.parse
 import base64
+import csv
 
 class Pyscape:
     "Facilitate grabbing data from Mozscape API."
@@ -12,6 +13,7 @@ class Pyscape:
     A = 'anchor-text'
     L = 'links'
     U = 'url-metrics'
+    T = 'top-pages'
 
     # Links API scope names
     L_PTP = 'page_to_page'
@@ -57,11 +59,11 @@ class Pyscape:
         return json_data
 
     def anchor_text(self, url, scope = A_PTP):
-        a_params = {'Scope': scope,
-                    'Sort': 'domains_linking_page',
-                    'Cols': 2}
+        params = {'Scope': scope,
+                  'Sort': 'domains_linking_page',
+                  'Cols': 2}
         
-        return self.call(Pyscape.A, url, a_params)
+        return self.call(Pyscape.A, url, params)
 
     def links(self, url, scope = L_PTP):
         data = []
@@ -71,18 +73,18 @@ class Pyscape:
         offset = 0
         step = 50
 
-        l_params = {'SourceCols': 4,
-                    'TargetCols': 4,
-                    'LinkCols': 2,
-                    'Scope': scope,
-                    'Sort': 'page_authority',
-                    'Limit': step,
-                    'Offset': offset}
+        params = {'SourceCols': 4,
+                  'TargetCols': 4,
+                  'LinkCols': 2,
+                  'Scope': scope,
+                  'Sort': 'domain_authority',
+                  'Limit': step,
+                  'Offset': offset}
 
         # Limited to 100,000 links total
         for i in range(int(100000 / step)):
-            l_params['Offset'] = offset
-            call_data = self.call(Pyscape.L, url, l_params)
+            params['Offset'] = offset
+            call_data = self.call(Pyscape.L, url, params)
             if call_data:
                 # If data was received...
                 data.extend(call_data)
@@ -94,16 +96,48 @@ class Pyscape:
         return data
 
     def url_metrics(self, url):
-        u_params = {'Cols': 4}
+        params = {'Cols': 4}
 
-        return self.call(Pyscape.U, url, u_params)
+        # For consistency, all methods return lists that
+        # can be written to CSV
+        data = []
+        data.append(self.call(Pyscape.U, url, params))
+
+        return data
 
     def bulk_metrics(self, urls):
         data = []
         for url in urls:
-            data.append(self.url_metrics(url))
+            data.extend(self.url_metrics(url))
 
         return data
+
+    def top_pages(self, url):
+        data = []
+        
+        # API documentation says that 50 links per
+        # request is optimal
+        offset = 0
+        step = 50
+        
+        params = {'Limit': step,
+                  'Offset': offset,
+                  'Cols': 4}
+
+        # Limited to 10,000 URLs total
+        for i in range(int(10000 / step)):
+            params['Offset'] = offset
+            call_data = self.call(Pyscape.T, url, params)
+            if call_data:
+                # If data was received...
+                data.extend(call_data)
+            else:
+                # If call() failed to return data, stop collecting
+                break   
+            offset = offset + step
+        
+        return data
+
 
 def help():
     print("Placeholder.")
@@ -128,22 +162,22 @@ def main():
     
     if method == 'url-metrics':
         url = option1
-        print(pys.url_metrics(url))
+        output = pys.url_metrics(url)
     elif method == 'bulk-metrics':
         urls = []
         with open(option1, 'r') as j:
             for line in j:
                 urls.append(line.rstrip())
-        print(pys.bulk_metrics(urls))
+        output = pys.bulk_metrics(urls)
     elif method == 'links':
         url = option1
         if not option2:
             help()
             sys.exit()
         elif option2 == 'ptp':
-            print(pys.links(url, Pyscape.L_PTP))
+            output = pys.links(url, Pyscape.L_PTP)
         elif option2 == 'ptd':
-            print(pys.links(url, Pyscape.L_PTD))
+            output = pys.links(url, Pyscape.L_PTD)
         else:
             help()
             sys.exit()
@@ -153,12 +187,17 @@ def main():
             help()
             sys.exit()
         elif option2 == 'ptp':
-            print(pys.anchor_text(url, Pyscape.A_PTP))
+            output = pys.anchor_text(url, Pyscape.A_PTP)
         elif option2 == 'ptd':
-            print(pys.anchor_text(url, Pyscape.A_PTD))
+            output = pys.anchor_text(url, Pyscape.A_PTD)
         else:
             help()
             sys.exit()
+    elif method == 'top-pages':
+        url = option1
+        output = pys.top_pages(url)
+
+    print(output)
 
 if __name__ == '__main__':
     sys.exit(main())
