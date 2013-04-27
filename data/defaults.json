@@ -1,47 +1,117 @@
 {
-    "u_d": [
-        "uu",
-        "upl",
-        "peid"
-    ],
+    "u_d": {
+        "description": "URL metrics on a domain level",
+        "c": [
+            "uu",
+            "upl",
+            "peid"
+        ]
+    },
 
-    "u_s": [
-        "uu",
-        "ufq",
-        "peid"
-    ],
+    "u_s": {
+        "description": "URL metrics on a subdomain level",
+        "c": [
+            "uu",
+            "ufq",
+            "peid"
+        ]
+    },
 
-    "u_p": [
-        "uu",
-        "ueid"
-    ],
+    "u_p": {
+        "description": "URL metrics on a page level",
+        "c": [
+            "uu",
+            "ueid"
+        ]
+    },
 
-    "t": [
-        "ut",
-        "uu",
-        "ueid",
-        "uipl",
-        "uid",
-        "us",
-        "upa"
-    ],
+    "t": {
+        "description": "Top pages report defaults",
+        "c": [
+            "ut",
+            "uu",
+            "ueid",
+            "uipl",
+            "uid",
+            "us",
+            "upa"
+        ]
+    },
 
-    "apu": [
-        "aput",
-        "apuiu",
-        "apueu",
-        "apuep"
-    ],
+    "a_ptd": {
+        "description": "Anchor text report, phrase to domain",
+        "scope": "phrase_to_domain"
+    },
 
-    "ptp_t": [
-        "luuu"
-    ],
+    "a_pts": {
+        "description": "Anchor text report, phrase to subdomain",
+        "scope": "phrase_to_subdomain"
+    },
 
-    "ptp_s": [
-        "uu"
-    ],
+    "a_ptp": {
+        "description": "Anchor text report, phrase to page",
+        "scope": "phrase_to_page",
+        "c": [
+            "aput",
+            "apuiu",
+            "apueu",
+            "apuep"
+        ]
+    },
 
-    "ptp_l": [
-        "lt"
-    ]
+    "a_ttd": {
+        "description": "Anchor text report, term to domain",
+        "scope": "term_to_domain"
+    },
+
+    "a_tts": {
+        "description": "Anchor text report, term to subdomain",
+        "scope": "term_to_subdomain"
+    },
+
+    "a_ttp": {
+        "description": "Anchor text report, term to page",
+        "scope": "term_to_page"
+    },
+
+    "l_dtd": {
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "domain_to_domain"
+    },
+
+    "l_dts": {
+        "description": "Incoming links to specified subdomain, one per linking domain",
+        "scope": "domain_to_subdomain"
+    },
+
+    "l_dtp": {
+        "description": "Incoming links to specified page, one per linking domain",
+        "scope": "domain_to_page"
+    },
+
+    "l_ptd": {
+        "description": "Incoming links from pages to specified domain",
+        "scope": "page_to_domain"
+    },
+
+    "l_pts": {
+        "description": "Incoming links from pages to specified subdomain",
+        "scope": "page_to_subdomain"
+    },
+
+    "l_ptp": {
+        "description": "Incoming links from pages to specified page",
+        "scope": "page_to_page",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu"
+        ],
+        "lc": [
+            "lt"
+        ]
+    }
+
+    
 }

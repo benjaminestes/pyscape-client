@@ -22,22 +22,19 @@ Put your keys in a file called `keys.json` in the same directory as the script. 
 
 
 ```bash
-./pyscape.py [url|urls] <resource> (outfile)
+./pyscape anchor [-d|-s|-p] [--phrase|--term] <url> check!
 
-    url: NBED
+./pyscape links [-d|-s|-p] [--one|--all] <url> check!
 
-./pyscape.py [links] <resource> (outfile)
+Only return links in "from pages" mode? "from domains" isn't 
+especially useful.
 
-    url: NBED
+./pyscape metrics [-d|-s|-p] <url> check!
+./pyscape bulk-metrics [-d|-s|-p] <infile.txt> check!
 
-./pyscape.py [anchors] <resource> (outfile)
+./pyscape top <url> check!
 
-    url: NBED
-
-./pyscape.py [ose] <resource> (outfile)
-
-    url: NBED
-
+./pyscape.py ose [-d|-s|-p] <url> queued...
 ```
 
 ### Examples
