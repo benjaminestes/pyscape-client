@@ -6,14 +6,13 @@ import csv
 from src.pyscape import Pyscape
 from src.queries import *
 
-# IDs of the default cases
-M_DOM_COLS = 'u_d'
-M_SUB_COLS = 'u_s'
-M_PAG_COLS = 'u_p'
-T_COLS = 't'
-A_PTP_COLS = 'apu'
+def load_scope(preset):
+    with open('./data/defaults.json', 'r') as f:
+        data = json.load(f)
+    
+    return data[preset]['scope']
 
-def load_cols(preset):
+def load_cols(preset, c_id):
     with open('./data/defaults.json', 'r') as f:
         data = json.load(f)
 
@@ -22,9 +21,8 @@ def load_cols(preset):
 
     cols = 0
 
-    for i in data[preset]:
-        # The bitflag.json generating script is wrapping numbers
-        # in quotation marks
+    for i in data[preset][c_id]:
+        # The bitflag.json generating script returns strings? 
         cols = cols | int(index[i]['flag'])
 
     return cols
@@ -33,51 +31,123 @@ def help():
     print("Placeholder.")
 
 def main():
+
     method = sys.argv[1] if len(sys.argv) > 1 else None
     option1 = sys.argv[2] if len(sys.argv) > 2 else None
     option2 = sys.argv[3] if len(sys.argv) > 3 else None
+    option3 = sys.argv[4] if len(sys.argv) > 4 else None
+    option4 = sys.argv[5] if len(sys.argv) > 5 else None
 
     with open('keys.json', 'r') as k:
         key_string = json.load(k)
 
     pys = Pyscape(key_string['access-id'], key_string['secret-key'])
-    
-    if method == 'url-metrics':
-        url = option1
-        cols = load_cols('u_d')
-        output = u_query(pys, url, cols)
+
+    if not method:
+        help()
+        sys.exit()
+
+    # Begin long tree of options...
+    if method == 'top':
+        if not option1:
+            exit('Missing arguments')
+        cols = load_cols('t', 'c')
+        output = t_query(pys, option1, cols)
+
+    elif method == 'metrics':
+        if not option2:
+            exit('Missing arguments')
+        if option1 == "-d":
+            cols = load_cols('u_d', 'c')
+        elif option1 == "-s":
+            cols = load_cols('u_s', 'c')
+        elif option1 == "-p":
+            cols = load_cols('u_p', 'c')
+        else:
+            exit('Invalid argument')
+
+        output = u_query(pys, option2, cols)
+
     elif method == 'bulk-metrics':
+        if not option2:
+            exit('Missing arguments')
+        if option1 == "-d":
+            cols = load_cols('u_d', 'c')
+        elif option1 == "-s":
+            cols = load_cols('u_s', 'c')
+        elif option1 == "-p":
+            cols = load_cols('u_p', 'c')
+        else:
+            exit('Invalid argument')
+
         urls = []
-        with open(option1, 'r') as j:
+        with open(option2, 'r') as j:
             for line in j:
                 urls.append(line.rstrip())
-        cols = load_cols('u_p')
         output = bulk_metrics(pys, urls, cols)
-    elif method == 'links':
-        url = option1
-        target_cols = load_cols('ptp_t')
-        source_cols = load_cols('ptp_s')
-        link_cols = load_cols('ptp_l')
-        output = l_query(pys, url, target_cols,
-                         source_cols, link_cols, Pyscape.L_PTD)
-    elif method == 'anchor-text':
-        url = option1
-        if not option2:
-            help()
-            sys.exit()
-        elif option2 == 'ptp':
-            cols = load_cols(A_PTP_COLS)
-            output = a_query(pys, url, cols, Pyscape.A_PTP)
-        else:
-            help()
-            sys.exit()
-    elif method == 'top-pages':
-        url = option1
-        cols = load_cols(T_COLS)
-        output = t_query(pys, url, cols)
-    else:
-        output = load_cols('u_s')
 
+    elif method == 'links':
+        if not option3:
+            exit('Missing arguments')
+        
+        preset = 'l_'
+
+        if option2 == '--one':
+            preset += 'dt'
+        elif option2 == '--all':
+            preset += 'pt'
+        else:
+            exit('Invalid argument')
+
+        if option1 == '-d':
+            preset += 'd'
+        elif option1 == '-s':
+            preset += 's'
+        elif option1 == '-p':
+            preset += 'p'
+        else:
+            exit('Invalid argument')
+
+        tc = load_cols(preset, 'tc')
+        sc = load_cols(preset, 'sc')
+        lc = load_cols(preset, 'lc')
+        scope = load_scope(preset)
+
+        args = (tc, sc, lc, scope)
+        output = l_query(pys, option3, *args)
+
+    elif method == 'anchor':
+        # Check required arguments exist
+        if not option3:
+            exit('Missing arguments')
+
+        preset = 'a_'
+
+        if option2 == '--phrase':
+            preset += 'pt'
+        elif option2 == '--term':
+            preset += 'tt'
+        else:
+            exit('Invalid argument')
+
+        if option1 == '-d':
+            preset += 'd'
+        elif option1 == '-s':
+            preset += 's'
+        elif option1 == '-p':
+            preset += 'p'
+        else:
+            exit('Invalid argument')
+
+        cols = load_cols(preset, 'c')
+        scope = load_scope(preset)
+        args = (cols, scope)
+        output = a_query(pys, option3, *args)
+
+    else:
+        help()
+        sys.exit()
+    
     print(output)
 
 if __name__ == '__main__':

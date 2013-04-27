@@ -46,6 +46,9 @@ class Pyscape:
         
         full_query = self.baseurl + method + '/' + \
                      url + '?' + query_string
+        
+        # Debug
+        # print(full_query)
 
         request = urllib.request.Request(full_query)
         request.add_header("Authorization", "Basic %s" % self.auth)
@@ -65,7 +68,8 @@ class Pyscape:
         
         return self.call(Pyscape.A, url, params)
 
-    def links(self, url, t = 4, s = 4, l = 2, scope = L_PTP, offset = 0, step = 50):
+    def links(self, url, t = 4, s = 4, l = 2, scope = L_PTP,
+              offset = 0, step = 50):
         params = {'SourceCols': s,
                   'TargetCols': t,
                   'LinkCols': l,
