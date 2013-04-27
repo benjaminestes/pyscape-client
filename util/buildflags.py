@@ -27,7 +27,7 @@ def main():
             data[row[0]] = row_data
 
     with open('bitflags.json', 'w') as w:
-        w.write(str(data))
+        w.write(str(data).replace('\'','\"'))
 
 if __name__ == '__main__':
     sys.exit(main())

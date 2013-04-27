@@ -1,9 +1,9 @@
 from src.pyscape import Pyscape
 
-def a_query(pys, url, scope = Pyscape.A_PTP):
-    return pys.anchor_text(url, scope)
+def a_query(pys, url, cols, scope = Pyscape.A_PTP):
+    return pys.anchor_text(url, cols, scope)
 
-def l_query(pys, url, scope = Pyscape.L_PTP):
+def l_query(pys, url, t, s, l, scope = Pyscape.L_PTP):
     data = []
 
     # API documentation says 50 links per request is optimal
@@ -12,7 +12,7 @@ def l_query(pys, url, scope = Pyscape.L_PTP):
     
     # Limited to 100,000 links total
     for i in range(int(100000 / step)):
-        call_data = pys.links(url, scope, offset, step)
+        call_data = pys.links(url, t, s, l, scope, offset, step)
         if call_data:
             # If data was received...
             data.extend(call_data)
@@ -23,7 +23,7 @@ def l_query(pys, url, scope = Pyscape.L_PTP):
 
     return data
     
-def t_query(pys, url):
+def t_query(pys, url, cols):
     data = []
         
     # API documentation says that 50 links per
@@ -33,7 +33,7 @@ def t_query(pys, url):
 
     # Limited to 10,000 URLs
     for i in range(int(10000 / step)):
-        call_data = pys.top_pages(url, offset, step)
+        call_data = pys.top_pages(url, cols, offset, step)
         if call_data:
             # If data was received...
             data.extend(call_data)
@@ -44,12 +44,12 @@ def t_query(pys, url):
 
     return data
 
-def u_query(pys, url):
-    return pys.url_metrics(url)
+def u_query(pys, url, cols):
+    return pys.url_metrics(url, cols)
     
-def bulk_metrics(pys, urls):
+def bulk_metrics(pys, urls, cols):
     data = []
     for url in urls:
-        data.extend(pys.url_metrics(url))
+        data.extend(pys.url_metrics(url, cols))
 
     return data

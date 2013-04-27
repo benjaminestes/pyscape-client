@@ -6,6 +6,29 @@ import csv
 from src.pyscape import Pyscape
 from src.queries import *
 
+# IDs of the default cases
+M_DOM_COLS = 'u_d'
+M_SUB_COLS = 'u_s'
+M_PAG_COLS = 'u_p'
+T_COLS = 't'
+A_PTP_COLS = 'apu'
+
+def load_cols(preset):
+    with open('./data/defaults.json', 'r') as f:
+        data = json.load(f)
+
+    with open('./data/bitflags.json', 'r') as g:
+        index = json.load(g)
+
+    cols = 0
+
+    for i in data[preset]:
+        # The bitflag.json generating script is wrapping numbers
+        # in quotation marks
+        cols = cols | int(index[i]['flag'])
+
+    return cols
+
 def help():
     print("Placeholder.")
 
@@ -14,14 +37,6 @@ def main():
     option1 = sys.argv[2] if len(sys.argv) > 2 else None
     option2 = sys.argv[3] if len(sys.argv) > 3 else None
 
-    if not method:
-        help()
-        sys.exit()
-
-    if not option1:
-        help()
-        exit('Invalid URL.')
-
     with open('keys.json', 'r') as k:
         key_string = json.load(k)
 
@@ -29,40 +44,39 @@ def main():
     
     if method == 'url-metrics':
         url = option1
-        output = u_query(url)
+        cols = load_cols('u_d')
+        output = u_query(pys, url, cols)
     elif method == 'bulk-metrics':
         urls = []
         with open(option1, 'r') as j:
             for line in j:
                 urls.append(line.rstrip())
-        output = bulk_metrics(pys, urls)
+        cols = load_cols('u_p')
+        output = bulk_metrics(pys, urls, cols)
     elif method == 'links':
         url = option1
-        if not option2:
-            help()
-            sys.exit()
-        elif option2 == 'ptp':
-            output = l_query(pys, url, Pyscape.L_PTP)
-        elif option2 == 'ptd':
-            output = l_query(pys, url, Pyscape.L_PTD)
-        else:
-            help()
-            sys.exit()
+        target_cols = load_cols('ptp_t')
+        source_cols = load_cols('ptp_s')
+        link_cols = load_cols('ptp_l')
+        output = l_query(pys, url, target_cols,
+                         source_cols, link_cols, Pyscape.L_PTD)
     elif method == 'anchor-text':
         url = option1
         if not option2:
             help()
             sys.exit()
         elif option2 == 'ptp':
-            output = a_query(url, Pyscape.A_PTP)
-        elif option2 == 'ptd':
-            output = a_query(url, Pyscape.A_PTD)
+            cols = load_cols(A_PTP_COLS)
+            output = a_query(pys, url, cols, Pyscape.A_PTP)
         else:
             help()
             sys.exit()
     elif method == 'top-pages':
         url = option1
-        output = t_query(pys, url)
+        cols = load_cols(T_COLS)
+        output = t_query(pys, url, cols)
+    else:
+        output = load_cols('u_s')
 
     print(output)
 

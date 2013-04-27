@@ -58,17 +58,17 @@ class Pyscape:
 
         return json_data
 
-    def anchor_text(self, url, scope = A_PTP):
+    def anchor_text(self, url, cols = 2, scope = A_PTP):
         params = {'Scope': scope,
                   'Sort': 'domains_linking_page',
-                  'Cols': 2}
+                  'Cols': cols}
         
         return self.call(Pyscape.A, url, params)
 
-    def links(self, url, scope = L_PTP, offset = 0, step = 50):
-        params = {'SourceCols': 4,
-                  'TargetCols': 4,
-                  'LinkCols': 2,
+    def links(self, url, t = 4, s = 4, l = 2, scope = L_PTP, offset = 0, step = 50):
+        params = {'SourceCols': s,
+                  'TargetCols': t,
+                  'LinkCols': l,
                   'Scope': scope,
                   'Sort': 'page_authority',
                   'Limit': step,
@@ -76,8 +76,8 @@ class Pyscape:
 
         return self.call(Pyscape.L, url, params)
 
-    def url_metrics(self, url):
-        params = {'Cols': 4}
+    def url_metrics(self, url, cols = 4):
+        params = {'Cols': cols}
 
         # For consistency, all methods return lists that
         # can be written to CSV
@@ -86,9 +86,9 @@ class Pyscape:
 
         return data
 
-    def top_pages(self, url, offset = 0, step = 50):
+    def top_pages(self, url, cols = 4, offset = 0, step = 50):
         params = {'Limit': step,
                   'Offset': offset,
-                  'Cols': 4}
+                  'Cols': cols}
 
         return self.call(Pyscape.T, url, params)
