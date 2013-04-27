@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import argparse
 import sys
 import json
 import csv
@@ -27,128 +28,80 @@ def load_cols(preset, c_id):
 
     return cols
 
-def help():
-    print("Placeholder.")
+def build_parser():
+    parser = argparse.ArgumentParser()
+    input_mode = parser.add_mutually_exclusive_group()
+    scope_mode = parser.add_mutually_exclusive_group()
+    output_mode = parser.add_mutually_exclusive_group()
+
+    command_opts = ['metrics',
+                    'bulk-metrics',
+                    'anchor',
+                    'top',
+                    'links']
+
+    parser.add_argument('command', 
+                        choices = command_opts,
+                        help = 'select operating mode')
+
+    parser.add_argument('infile', 
+                        help = 'specify a URL or text file as appropriate')
+
+    parser.add_argument('outfile', 
+                        help = 'specify an output file')
+    
+    # Mutually exclusive flags for URL input mode
+    input_mode.add_argument('-d', '--domain-mode',
+                            action = 'store_true',
+                            help = 'interpret input URL(s) as domains only')
+    
+    input_mode.add_argument('-s', '--subdomain-mode',
+                            action = 'store_true',
+                            help = 'interpret input URL(s) as subdomains only')
+
+    input_mode.add_argument('-p', '--page-mode',
+                            action = 'store_true',
+                            help = 'interpret input URL(s) as individual pages')
+
+    # Mutually exclusive flags for scope in link/anchor modes
+    scope_mode.add_argument('-o', '--one-page',
+                            action = 'store_true',
+                            help = 'in link mode, return one page per linking domain')
+    
+    scope_mode.add_argument('-m', '--many-pages',
+                            action = 'store_true',
+                            help = 'in link mode, return many pages per linking domain')
+
+    scope_mode.add_argument('-f', '--phrase',
+                            action = 'store_true',
+                            help = 'in anchor mode, return phrase matches')
+    
+    scope_mode.add_argument('-t', '--term',
+                            action = 'store_true',
+                            help = 'in anchor mode, return term matches')
+ 
+    # Mutually exclusive flags for output format
+    output_mode.add_argument('-j', '--json',
+                            action = 'store_true',
+                            help = 'write data in JSON format')
+    
+    output_mode.add_argument('-c', '--csv',
+                            action = 'store_true',
+                            help = 'write data in CSV format')
+   
+    return parser
 
 def main():
 
-    method = sys.argv[1] if len(sys.argv) > 1 else None
-    option1 = sys.argv[2] if len(sys.argv) > 2 else None
-    option2 = sys.argv[3] if len(sys.argv) > 3 else None
-    option3 = sys.argv[4] if len(sys.argv) > 4 else None
-    option4 = sys.argv[5] if len(sys.argv) > 5 else None
+    args = build_parser()
+    args.parse_args()
 
     with open('keys.json', 'r') as k:
         key_string = json.load(k)
 
     pys = Pyscape(key_string['access-id'], key_string['secret-key'])
-
-    if not method:
-        help()
-        sys.exit()
-
-    # Begin long tree of options...
-    if method == 'top':
-        if not option1:
-            exit('Missing arguments')
-        cols = load_cols('t', 'c')
-        output = t_query(pys, option1, cols)
-
-    elif method == 'metrics':
-        if not option2:
-            exit('Missing arguments')
-        if option1 == "-d":
-            cols = load_cols('u_d', 'c')
-        elif option1 == "-s":
-            cols = load_cols('u_s', 'c')
-        elif option1 == "-p":
-            cols = load_cols('u_p', 'c')
-        else:
-            exit('Invalid argument')
-
-        output = u_query(pys, option2, cols)
-
-    elif method == 'bulk-metrics':
-        if not option2:
-            exit('Missing arguments')
-        if option1 == "-d":
-            cols = load_cols('u_d', 'c')
-        elif option1 == "-s":
-            cols = load_cols('u_s', 'c')
-        elif option1 == "-p":
-            cols = load_cols('u_p', 'c')
-        else:
-            exit('Invalid argument')
-
-        urls = []
-        with open(option2, 'r') as j:
-            for line in j:
-                urls.append(line.rstrip())
-        output = bulk_metrics(pys, urls, cols)
-
-    elif method == 'links':
-        if not option3:
-            exit('Missing arguments')
-        
-        preset = 'l_'
-
-        if option2 == '--one':
-            preset += 'dt'
-        elif option2 == '--all':
-            preset += 'pt'
-        else:
-            exit('Invalid argument')
-
-        if option1 == '-d':
-            preset += 'd'
-        elif option1 == '-s':
-            preset += 's'
-        elif option1 == '-p':
-            preset += 'p'
-        else:
-            exit('Invalid argument')
-
-        tc = load_cols(preset, 'tc')
-        sc = load_cols(preset, 'sc')
-        lc = load_cols(preset, 'lc')
-        scope = load_scope(preset)
-
-        args = (tc, sc, lc, scope)
-        output = l_query(pys, option3, *args)
-
-    elif method == 'anchor':
-        # Check required arguments exist
-        if not option3:
-            exit('Missing arguments')
-
-        preset = 'a_'
-
-        if option2 == '--phrase':
-            preset += 'pt'
-        elif option2 == '--term':
-            preset += 'tt'
-        else:
-            exit('Invalid argument')
-
-        if option1 == '-d':
-            preset += 'd'
-        elif option1 == '-s':
-            preset += 's'
-        elif option1 == '-p':
-            preset += 'p'
-        else:
-            exit('Invalid argument')
-
-        cols = load_cols(preset, 'c')
-        scope = load_scope(preset)
-        args = (cols, scope)
-        output = a_query(pys, option3, *args)
-
-    else:
-        help()
-        sys.exit()
-    
-    print(output)
+   
+    # print(output)
 
 if __name__ == '__main__':
     sys.exit(main())
