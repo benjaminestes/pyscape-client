@@ -4,54 +4,7 @@ import sys
 import json
 import csv
 from src.pyscape import Pyscape
-
-def link_query(pys, url, scope = Pyscape.L_PTP):
-    data = []
-
-    # API documentation says 50 links per request is optimal
-    offset = 0
-    step = 50
-    
-    # Limited to 100,000 links total
-    for i in range(int(100000 / step)):
-        call_data = pys.links(url, scope, offset, step)
-        if call_data:
-            # If data was received...
-            data.extend(call_data)
-        else:
-            # If call() failed to return data, stop collecting
-            break   
-        offset = offset + step
-
-    return data
-    
-def bulk_metrics(pys, urls):
-    data = []
-    for url in urls:
-        data.extend(pys.url_metrics(url))
-
-    return data
-
-def top_pages_query(pys, url):
-    data = []
-        
-    # API documentation says that 50 links per
-    # request is optimal
-    offset = 0
-    step = 50
-
-    # Limited to 10,000 URLs
-    for i in range(int(10000 / step)):
-        call_data = pys.top_pages(url, offset, step)
-        if call_data:
-            # If data was received...
-            data.extend(call_data)
-        else:
-            # If call() failed to return data, stop collecting
-            break   
-        offset = offset + step
-
-    return data
+from src.queries import *
 
 def help():
     print("Placeholder.")
@@ -76,7 +29,7 @@ def main():
     
     if method == 'url-metrics':
         url = option1
-        output = pys.url_metrics(url)
+        output = u_query(url)
     elif method == 'bulk-metrics':
         urls = []
         with open(option1, 'r') as j:
@@ -89,9 +42,9 @@ def main():
             help()
             sys.exit()
         elif option2 == 'ptp':
-            output = link_query(pys, url, Pyscape.L_PTP)
+            output = l_query(pys, url, Pyscape.L_PTP)
         elif option2 == 'ptd':
-            output = link_query(pys, url, Pyscape.L_PTD)
+            output = l_query(pys, url, Pyscape.L_PTD)
         else:
             help()
             sys.exit()
@@ -101,15 +54,15 @@ def main():
             help()
             sys.exit()
         elif option2 == 'ptp':
-            output = pys.anchor_text(url, Pyscape.A_PTP)
+            output = a_query(url, Pyscape.A_PTP)
         elif option2 == 'ptd':
-            output = pys.anchor_text(url, Pyscape.A_PTD)
+            output = a_query(url, Pyscape.A_PTD)
         else:
             help()
             sys.exit()
     elif method == 'top-pages':
         url = option1
-        output = top_pages_query(pys, url)
+        output = t_query(pys, url)
 
     print(output)
 

@@ -86,7 +86,6 @@ class Pyscape:
 
         return data
 
-
     def top_pages(self, url, offset = 0, step = 50):
         params = {'Limit': step,
                   'Offset': offset,
