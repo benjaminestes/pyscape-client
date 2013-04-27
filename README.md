@@ -1,6 +1,7 @@
 # Pyscape
 
-A script to grab data from the [Mozscape API](http://apiwiki.seomoz.org/). Uses Python 3.
+A script to grab data from the [Mozscape 
+API](http://apiwiki.seomoz.org/). Requires Python &ge 3.2.
 
 ## Getting started
 
