@@ -4,8 +4,10 @@ import argparse
 import sys
 import json
 import csv
+
 from src.pyscape import Pyscape
 from src.queries import *
+from src.cli import *
 
 def load_scope(preset):
     with open('./data/defaults.json', 'r') as f:
@@ -24,77 +26,10 @@ def load_cols(preset, c_id):
 
     for i in data[preset][c_id]:
         # The bitflag.json generating script returns strings? 
+        # Because the bitflag.json generator doesn't filter properly...
         cols = cols | int(index[i]['flag'])
 
     return cols
-
-def build_parser():
-    parser = argparse.ArgumentParser(description = 'Interface with the Mozscape API to provide link metrics')
-    
-    input_mode = parser.add_mutually_exclusive_group()
-    scope_mode = parser.add_mutually_exclusive_group()
-    output_mode = parser.add_mutually_exclusive_group()
-
-    command_opts = ['metrics',
-                    'bulk-metrics',
-                    'anchor',
-                    'top',
-                    'links']
-
-    parser.add_argument('command', 
-                        choices = command_opts,
-                        help = 'select operating mode')
-
-    parser.add_argument('source', 
-                        help = 'specify a URL or text file as appropriate')
-
-    parser.add_argument('dest', 
-                        help = 'specify an output file')
-    
-    # Mutually exclusive flags for URL input mode
-    input_mode.add_argument('-d', '--domain-mode',
-                            action = 'store_true',
-                            help = 'interpret input URL(s) as domains only')
-    
-    input_mode.add_argument('-s', '--subdomain-mode',
-                            action = 'store_true',
-                            help = 'interpret input URL(s) as subdomains only')
-
-    input_mode.add_argument('-p', '--page-mode',
-                            action = 'store_true',
-                            default = True,
-                            help = 'interpret input URL(s) as individual pages')
-
-    # Mutually exclusive flags for scope in link/anchor modes
-    scope_mode.add_argument('-o', '--one-page',
-                            action = 'store_true',
-                            help = 'in link mode, return one page per linking domain')
-    
-    scope_mode.add_argument('-m', '--many-pages',
-                            action = 'store_true',
-                            default = True,
-                            help = 'in link mode, return many pages per linking domain')
-
-    scope_mode.add_argument('-f', '--phrase',
-                            action = 'store_true',
-                            help = 'in anchor mode, return phrase matches')
-    
-    scope_mode.add_argument('-t', '--term',
-                            action = 'store_true',
-                            default = True,
-                            help = 'in anchor mode, return term matches')
- 
-    # Mutually exclusive flags for output format
-    output_mode.add_argument('-j', '--json',
-                            action = 'store_true',
-                            help = 'write data in JSON format')
-    
-    output_mode.add_argument('-c', '--csv',
-                            action = 'store_true',
-                            default = True,
-                            help = 'write data in CSV format')
-   
-    return parser
 
 def do_anchor(pys, args):
     
@@ -119,7 +54,7 @@ def do_anchor(pys, args):
 
     params = (cols, scope)
     
-    return a_query(pys, url, *params)
+    return (preset, a_query(pys, url, *params))
 
 def do_bulk_metrics(pys, args):
 
@@ -130,13 +65,15 @@ def do_bulk_metrics(pys, args):
             urls.append(line.rstrip())
     
     if args.domain_mode:
-        cols = load_cols('u_d', 'c')
+        preset = 'u_d'
     elif args.subdomain_mode:
-        cols = load_cols('u_s', 'c')
+        preset = 'u_s'
     elif args.page_mode:
-        cols = load_cols('u_p', 'c')
+        preset = 'u_p'
 
-    return bulk_metrics(pys, urls, cols)
+    cols = load_cols(preset, 'c')
+
+    return (preset, bulk_metrics(pys, urls, cols))
 
 def do_links(pys, args):
 
@@ -163,28 +100,74 @@ def do_links(pys, args):
 
     params = (tc, sc, lc, scope)
 
-    return l_query(pys, url, *params) 
+    return (preset, l_query(pys, url, *params))
 
 def do_metrics(pys, args):
 
     url = args.source
 
     if args.domain_mode:
-        cols = load_cols('u_d', 'c')
+        preset = 'u_d'
     elif args.subdomain_mode:
-        cols = load_cols('u_s', 'c')
+        preset = 'u_s'
     elif args.page_mode:
-        cols = load_cols('u_p', 'c')
+        preset = 'u_p'
 
-    return u_query(pys, url, cols)
+    cols = load_cols(preset, 'c')
+
+    return (preset, u_query(pys, url, cols))
 
 def do_top(pys, args):
     
     url = args.source
 
-    cols = load_cols('t', 'c')
+    preset = 't'
 
-    return t_query(pys, url, cols)
+    cols = load_cols(preset, 'c')
+
+    return (preset, t_query(pys, url, cols))
+
+def do_json(args, data):
+    with open(args.dest, 'w') as f:
+        f.write(str(data).replace('\'', '\"'))
+
+def do_csv(args, preset, data):
+    with open('./data/defaults.json', 'r') as f:
+        defaults = json.load(f)
+
+    with open('./data/bitflags.json', 'r') as g:
+        index = json.load(g)
+
+    output = []
+    headers = []
+    keys = []
+    col_types = ['c', 'tc', 'sc', 'lc']
+
+    # Generate human-readable headers from our index
+    for i in col_types:
+        # Some col_types will always be missing...
+        # is there a better way to deal with this?
+        try:    
+            for j in defaults[preset][i]:
+                keys.append(j)
+                headers.append(index[j]['human'])
+        except:
+            pass
+
+    output.append(headers)
+
+    # Read appropriate columns from data
+    for record in data:
+        line = []
+        for k in keys:
+            line.append(record[k])
+        output.append(line)
+
+    with open(args.dest, 'w') as outfile:
+        writer = csv.writer(outfile, delimiter = ',',
+                            quotechar = '"',
+                            quoting = csv.QUOTE_ALL)
+        writer.writerows(output)
 
 def main():
 
@@ -206,8 +189,15 @@ def main():
         output = do_links(pys, args)
     elif args.command == 'anchor':
         output = do_anchor(pys, args)
+
+    preset, data = output[0], output[1]
+
+    if args.json:
+        do_json(args, data)
+    elif args.csv:
+        do_csv(args, preset, data)
    
-    print(output)
+    print('Success!')
 
 if __name__ == '__main__':
     sys.exit(main())
