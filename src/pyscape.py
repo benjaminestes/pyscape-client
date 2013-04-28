@@ -5,9 +5,6 @@ import urllib.request
 import urllib.parse
 import base64
 
-__version__ = '0.0.0'
-__all__ = ['Pyscape']
-
 class Pyscape:
     "Facilitate grabbing data from Mozscape API."
     # API call names
@@ -48,7 +45,7 @@ class Pyscape:
                      url + '?' + query_string
         
         # Debug
-        print(full_query)
+        # print(full_query)
 
         request = urllib.request.Request(full_query)
         request.add_header("Authorization", "Basic %s" % self.auth)

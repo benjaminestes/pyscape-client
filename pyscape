@@ -173,6 +173,7 @@ def do_csv(args, preset, data):
     with open(args.dest, 'w') as outfile:
         writer = csv.writer(outfile, delimiter = ',',
                             quotechar = '"',
+                            dialect = 'excel',
                             quoting = csv.QUOTE_ALL)
         writer.writerows(output)
 
@@ -204,7 +205,7 @@ def main():
     elif args.csv:
         do_csv(args, preset, data)
    
-    print('Success!')
+    print('Job finished.')
 
 if __name__ == '__main__':
     sys.exit(main())
