@@ -29,7 +29,8 @@ def load_cols(preset, c_id):
     return cols
 
 def build_parser():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description = 'Interface with the Mozscape API to provide link metrics')
+    
     input_mode = parser.add_mutually_exclusive_group()
     scope_mode = parser.add_mutually_exclusive_group()
     output_mode = parser.add_mutually_exclusive_group()
@@ -44,10 +45,10 @@ def build_parser():
                         choices = command_opts,
                         help = 'select operating mode')
 
-    parser.add_argument('infile', 
+    parser.add_argument('source', 
                         help = 'specify a URL or text file as appropriate')
 
-    parser.add_argument('outfile', 
+    parser.add_argument('dest', 
                         help = 'specify an output file')
     
     # Mutually exclusive flags for URL input mode
@@ -61,6 +62,7 @@ def build_parser():
 
     input_mode.add_argument('-p', '--page-mode',
                             action = 'store_true',
+                            default = True,
                             help = 'interpret input URL(s) as individual pages')
 
     # Mutually exclusive flags for scope in link/anchor modes
@@ -70,6 +72,7 @@ def build_parser():
     
     scope_mode.add_argument('-m', '--many-pages',
                             action = 'store_true',
+                            default = True,
                             help = 'in link mode, return many pages per linking domain')
 
     scope_mode.add_argument('-f', '--phrase',
@@ -78,6 +81,7 @@ def build_parser():
     
     scope_mode.add_argument('-t', '--term',
                             action = 'store_true',
+                            default = True,
                             help = 'in anchor mode, return term matches')
  
     # Mutually exclusive flags for output format
@@ -87,21 +91,123 @@ def build_parser():
     
     output_mode.add_argument('-c', '--csv',
                             action = 'store_true',
+                            default = True,
                             help = 'write data in CSV format')
    
     return parser
 
+def do_anchor(pys, args):
+    
+    url = args.source
+
+    preset = 'a_'
+
+    if args.phrase:
+        preset += 'pt'
+    elif args.phrase:
+        preset += 'tt'
+    
+    if args.domain_mode:
+        preset += 'd'
+    elif args.subdomain_mode:
+        preset += 's'
+    elif args.page_mode:
+        preset += 'p'
+
+    cols = load_cols(preset, 'c')
+    scope = load_scope(preset)
+
+    params = (cols, scope)
+    
+    return a_query(pys, url, *params)
+
+def do_bulk_metrics(pys, args):
+
+    urls = []
+    
+    with open(args.source, 'r') as f:
+        for line in f:
+            urls.append(line.rstrip())
+    
+    if args.domain_mode:
+        cols = load_cols('u_d', 'c')
+    elif args.subdomain_mode:
+        cols = load_cols('u_s', 'c')
+    elif args.page_mode:
+        cols = load_cols('u_p', 'c')
+
+    return bulk_metrics(pys, urls, cols)
+
+def do_links(pys, args):
+
+    url = args.source
+
+    preset = 'l_'
+
+    if args.one_page:
+        preset += 'dt'
+    elif args.many_pages:
+        preset += 'pt'
+
+    if args.domain_mode:
+        preset += 'd'
+    elif args.subdomain_mode:
+        preset += 's'
+    elif args.page_mode:
+        preset += 'p'
+
+    tc = load_cols(preset, 'tc')
+    sc = load_cols(preset, 'sc')
+    lc = load_cols(preset, 'lc')
+    scope = load_scope(preset)
+
+    params = (tc, sc, lc, scope)
+
+    return l_query(pys, url, *params) 
+
+def do_metrics(pys, args):
+
+    url = args.source
+
+    if args.domain_mode:
+        cols = load_cols('u_d', 'c')
+    elif args.subdomain_mode:
+        cols = load_cols('u_s', 'c')
+    elif args.page_mode:
+        cols = load_cols('u_p', 'c')
+
+    return u_query(pys, url, cols)
+
+def do_top(pys, args):
+    
+    url = args.source
+
+    cols = load_cols('t', 'c')
+
+    return t_query(pys, url, cols)
+
 def main():
 
-    args = build_parser()
-    args.parse_args()
+    parser = build_parser()
+    args = parser.parse_args()
 
     with open('keys.json', 'r') as k:
         key_string = json.load(k)
 
     pys = Pyscape(key_string['access-id'], key_string['secret-key'])
+
+    if args.command == 'metrics':
+        output = do_metrics(pys, args)
+    elif args.command == 'top':
+        output = do_top(pys, args)
+    elif args.command == 'bulk-metrics':
+        output = do_bulk_metrics(pys, args)
+    elif args.command == 'links':
+        output = do_links(pys, args)
+    elif args.command == 'anchor':
+        output = do_anchor(pys, args)
    
-    # print(output)
+    print(output)
 
 if __name__ == '__main__':
     sys.exit(main())
