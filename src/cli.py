@@ -38,7 +38,7 @@ def build_parser():
     input_mode.add_argument('-p', '--page-mode',
                             action = 'store_true',
                             default = True,
-                            help = 'interpret input URL(s) as individual pages')
+                            help = 'interpret input URL(s) as individual pages; default')
 
     # Mutually exclusive flags for scope in link/anchor modes
     scope_mode.add_argument('-o', '--one-page',
@@ -48,7 +48,7 @@ def build_parser():
     scope_mode.add_argument('-m', '--many-pages',
                             action = 'store_true',
                             default = True,
-                            help = 'in link mode, return many pages per linking domain')
+                            help = 'in link mode, return many pages per linking domain; default')
 
     scope_mode.add_argument('-f', '--phrase',
                             action = 'store_true',
@@ -57,7 +57,7 @@ def build_parser():
     scope_mode.add_argument('-t', '--term',
                             action = 'store_true',
                             default = True,
-                            help = 'in anchor mode, return term matches')
+                            help = 'in anchor mode, return term matches; default')
  
     # Mutually exclusive flags for output format
     output_mode.add_argument('-j', '--json',
@@ -67,6 +67,6 @@ def build_parser():
     output_mode.add_argument('-c', '--csv',
                             action = 'store_true',
                             default = True,
-                            help = 'write data in CSV format')
+                            help = 'write data in CSV format; default')
    
     return parser
