@@ -3,7 +3,7 @@ from src.pyscape import Pyscape
 def a_query(pys, url, cols, scope = Pyscape.A_PTP):
     return pys.anchor_text(url, cols, scope)
 
-def l_query(pys, url, t, s, l, scope):
+def l_query(pys, url, t, s, l, scope, sort):
     data = []
 
     # API documentation says 50 links per request is optimal
@@ -12,7 +12,7 @@ def l_query(pys, url, t, s, l, scope):
     
     # Limited to 100,000 links total
     for i in range(int(100000 / step)):
-        call_data = pys.links(url, t, s, l, scope, offset, step)
+        call_data = pys.links(url, t, s, l, scope, sort, offset, step)
         if call_data:
             # If data was received...
             data.extend(call_data)

@@ -123,6 +123,7 @@
     "l_dtd": {
         "description": "Incoming links to specified domain, one per linking domain",
         "scope": "domain_to_domain",
+        "sort": "domain_authority",
         "tc": [
             "luuu",
             "luupl"
@@ -143,6 +144,7 @@
     "l_dts": {
         "description": "Incoming links to specified subdomain, one per linking domain",
         "scope": "domain_to_subdomain",
+        "sort": "domain_authority",
         "tc": [
             "luuu",
             "luufq"
@@ -163,6 +165,7 @@
     "l_dtp": {
         "description": "Incoming links to specified page, one per linking domain",
         "scope": "domain_to_page",
+        "sort": "domain_authority",
         "tc": [
             "luuu"
         ],
@@ -182,6 +185,7 @@
     "l_ptd": {
         "description": "Incoming links from pages to specified domain",
         "scope": "page_to_domain",
+        "sort": "page_authority",
         "tc": [
             "luuu",
             "luupl"
@@ -202,6 +206,7 @@
     "l_pts": {
         "description": "Incoming links from pages to specified subdomain",
         "scope": "page_to_subdomain",
+        "sort": "page_authority",
         "tc": [
             "luuu",
             "luufq"
@@ -222,6 +227,7 @@
     "l_ptp": {
         "description": "Incoming links from pages to specified page",
         "scope": "page_to_page",
+        "sort": "page_authority",
         "tc": [
             "luuu"
         ],

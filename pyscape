@@ -14,6 +14,12 @@ def load_scope(preset):
         data = json.load(f)
     
     return data[preset]['scope']
+    
+def load_sort(preset):
+    with open('./data/defaults.json', 'r') as f:
+        data = json.load(f)
+    
+    return data[preset]['sort']
 
 def load_cols(preset, c_id):
     with open('./data/defaults.json', 'r') as f:
@@ -97,8 +103,9 @@ def do_links(pys, args):
     sc = load_cols(preset, 'sc')
     lc = load_cols(preset, 'lc')
     scope = load_scope(preset)
+    sort = load_sort(preset)
 
-    params = (tc, sc, lc, scope)
+    params = (tc, sc, lc, scope, sort)
 
     return (preset, l_query(pys, url, *params))
 
