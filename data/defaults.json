@@ -2,29 +2,54 @@
     "u_d": {
         "description": "URL metrics on a domain level",
         "c": [
+            "ut",
             "uu",
             "upl",
-            "peid"
+            "ueid",
+            "peid",
+            "uipl",
+            "pid",
+            "pmrp",
+            "ptrp",
+            "upa",
+            "pda"
         ]
     },
-
     "u_s": {
         "description": "URL metrics on a subdomain level",
         "c": [
+            "ut",
             "uu",
             "ufq",
-            "peid"
+            "ueid",
+            "feid",
+            "peid",
+            "uipl",
+            "fmrp",
+            "pmrp",
+            "ftrp",
+            "ptrp",
+            "us",
+            "upa"
         ]
     },
-
     "u_p": {
         "description": "URL metrics on a page level",
         "c": [
+            "ut",
             "uu",
-            "ueid"
+            "upl",
+            "ueid",
+            "peid",
+            "uipl",
+            "pid",
+            "pmrp",
+            "ptrp",
+            "us",
+            "upa",
+            "pda"
         ]
     },
-
     "t": {
         "description": "Top pages report defaults",
         "c": [
@@ -37,17 +62,25 @@
             "upa"
         ]
     },
-
     "a_ptd": {
         "description": "Anchor text report, phrase to domain",
-        "scope": "phrase_to_domain"
+        "scope": "phrase_to_domain",
+        "c": [
+            "appt",
+            "appeu",
+            "appep"
+        ]
     },
-
     "a_pts": {
         "description": "Anchor text report, phrase to subdomain",
-        "scope": "phrase_to_subdomain"
+        "scope": "phrase_to_subdomain",
+        "c": [
+            "apft",
+            "apfiu",
+            "apfeu",
+            "apfep"
+        ]
     },
-
     "a_ptp": {
         "description": "Anchor text report, phrase to page",
         "scope": "phrase_to_page",
@@ -58,47 +91,134 @@
             "apuep"
         ]
     },
-
     "a_ttd": {
         "description": "Anchor text report, term to domain",
-        "scope": "term_to_domain"
+        "scope": "term_to_domain",
+        "c": [
+            "atpt",
+            "atpeu",
+            "atpep"
+        ]
     },
-
     "a_tts": {
         "description": "Anchor text report, term to subdomain",
-        "scope": "term_to_subdomain"
+        "scope": "term_to_subdomain",
+        "c": [
+            "atft",
+            "atfiu",
+            "atfeu",
+            "atfep"
+        ]
     },
-
     "a_ttp": {
         "description": "Anchor text report, term to page",
-        "scope": "term_to_page"
+        "scope": "term_to_page",
+        "c": [
+            "atut",
+            "atuiu",
+            "atueu",
+            "atuep"
+        ]
     },
-
     "l_dtd": {
         "description": "Incoming links to specified domain, one per linking domain",
-        "scope": "domain_to_domain"
+        "scope": "domain_to_domain",
+        "tc": [
+            "luuu",
+            "luupl"
+        ],
+        "sc": [
+            "uu",
+            "upl",
+            "uipl",
+            "pid",
+            "us",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt"
+        ]
     },
-
     "l_dts": {
         "description": "Incoming links to specified subdomain, one per linking domain",
-        "scope": "domain_to_subdomain"
+        "scope": "domain_to_subdomain",
+        "tc": [
+            "luuu",
+            "luufq"
+        ],
+        "sc": [
+            "uu",
+            "upl",
+            "uipl",
+            "pid",
+            "us",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt"
+        ]
     },
-
     "l_dtp": {
         "description": "Incoming links to specified page, one per linking domain",
-        "scope": "domain_to_page"
+        "scope": "domain_to_page",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "upl",
+            "uipl",
+            "pid",
+            "us",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt"
+        ]
     },
-
     "l_ptd": {
         "description": "Incoming links from pages to specified domain",
-        "scope": "page_to_domain"
+        "scope": "page_to_domain",
+        "tc": [
+            "luuu",
+            "luupl"
+        ],
+        "sc": [
+            "uu",
+            "upl",
+            "uipl",
+            "pid",
+            "us",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt"
+        ]
     },
-
     "l_pts": {
         "description": "Incoming links from pages to specified subdomain",
-        "scope": "page_to_subdomain"
+        "scope": "page_to_subdomain",
+        "tc": [
+            "luuu",
+            "luufq"
+        ],
+        "sc": [
+            "uu",
+            "upl",
+            "uipl",
+            "pid",
+            "us",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt"
+        ]
     },
-
     "l_ptp": {
         "description": "Incoming links from pages to specified page",
         "scope": "page_to_page",
@@ -106,12 +226,16 @@
             "luuu"
         ],
         "sc": [
-            "uu"
+            "uu",
+            "upl",
+            "uipl",
+            "pid",
+            "us",
+            "upa",
+            "pda"
         ],
         "lc": [
-            "lt"
+            "lnt"
         ]
     }
-
-    
 }

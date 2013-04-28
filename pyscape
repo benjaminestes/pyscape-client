@@ -39,7 +39,7 @@ def do_anchor(pys, args):
 
     if args.phrase:
         preset += 'pt'
-    elif args.phrase:
+    elif args.term:
         preset += 'tt'
     
     if args.domain_mode:
