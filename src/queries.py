@@ -2,9 +2,14 @@ import time
 from src.pyscape import Pyscape
 
 def a_query(pys, url, cols, scope = Pyscape.A_PTP):
+    "run a query for anchor text"
+    
+    # anchor text query requires only one call
     return pys.anchor_text(url, cols, scope)
 
 def l_query(pys, url, t, s, l, scope, sort):
+    "run a query for links"
+
     data = []
 
     # API documentation says 50 links per request is optimal
@@ -27,6 +32,8 @@ def l_query(pys, url, t, s, l, scope, sort):
     return data
     
 def t_query(pys, url, cols):
+    "run a query for top pages"
+
     data = []
         
     # API documentation says that 50 links per
@@ -51,9 +58,13 @@ def t_query(pys, url, cols):
     return data
 
 def u_query(pys, url, cols):
+    "run a query for url metrics"
+
     return pys.url_metrics(url, cols)
     
 def bulk_metrics(pys, urls, cols):
+    "run a query for url metrics for many urls"
+
     data = []
     count = 0
     for url in urls:

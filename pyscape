@@ -10,18 +10,24 @@ from src.queries import *
 from src.cli import *
 
 def load_scope(preset):
+    "Find the scope for the API call user has selected"
+
     with open('./data/defaults.json', 'r') as f:
         data = json.load(f)
     
     return data[preset]['scope']
     
 def load_sort(preset):
+    "Find an appropriate sort for the API call user has selected."
+
     with open('./data/defaults.json', 'r') as f:
         data = json.load(f)
     
     return data[preset]['sort']
 
 def load_cols(preset, c_id):
+    "Get the return fields the user's selection requires"
+
     with open('./data/defaults.json', 'r') as f:
         data = json.load(f)
 
@@ -38,6 +44,7 @@ def load_cols(preset, c_id):
     return cols
 
 def do_anchor(pys, args):
+    "If the user wants anchor text, figure out the right preset"
     
     url = args.source
 
@@ -63,7 +70,8 @@ def do_anchor(pys, args):
     return (preset, a_query(pys, url, *params))
 
 def do_bulk_metrics(pys, args):
-
+    "If the user wants bulk metrics, figure out the right preset and run"
+    
     urls = []
     
     with open(args.source, 'r') as f:
@@ -82,6 +90,7 @@ def do_bulk_metrics(pys, args):
     return (preset, bulk_metrics(pys, urls, cols))
 
 def do_links(pys, args):
+    "If the user wants a link list, figure out the right preset and run"
 
     url = args.source
 
@@ -110,6 +119,7 @@ def do_links(pys, args):
     return (preset, l_query(pys, url, *params))
 
 def do_metrics(pys, args):
+    "if the user wants basic metrics, find preset and run"
 
     url = args.source
 
@@ -125,6 +135,7 @@ def do_metrics(pys, args):
     return (preset, u_query(pys, url, cols))
 
 def do_top(pys, args):
+    "if top pages, find preset and run"
     
     url = args.source
 
@@ -135,10 +146,14 @@ def do_top(pys, args):
     return (preset, t_query(pys, url, cols))
 
 def do_json(args, data):
+    "generate json output"
+
     with open(args.dest, 'w') as f:
         f.write(str(data).replace('\'', '\"'))
 
 def do_csv(args, preset, data):
+    "generate csv output"
+
     with open('./data/defaults.json', 'r') as f:
         defaults = json.load(f)
 
@@ -182,11 +197,13 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
 
+    # load API credentials
     with open('keys.json', 'r') as k:
         key_string = json.load(k)
 
     pys = Pyscape(key_string['access-id'], key_string['secret-key'])
 
+    # interpret user's input
     if args.command == 'metrics':
         output = do_metrics(pys, args)
     elif args.command == 'top':
@@ -198,8 +215,11 @@ def main():
     elif args.command == 'anchor':
         output = do_anchor(pys, args)
 
+    # file writing functions need to know both the data and what
+    # response fields were requested
     preset, data = output[0], output[1]
 
+    # write output
     if args.json:
         do_json(args, data)
     elif args.csv:
