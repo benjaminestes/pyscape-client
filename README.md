@@ -19,9 +19,14 @@ as the script. The structure of this file should be:
 ```
 {
     "access-id": "your-id-here",
-    "secret-key": "your-key-here"
+    "secret-key": "your-key-here",
+    "level": "access-level"
 }
 ```
+
+...where `access-level` is one of `free`, `pro`, or `full` 
+depending on the [level of rate 
+limiting](http://apiwiki.seomoz.org/rate-limiting) you need.
 
 ## Usage
 

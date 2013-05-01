@@ -1,5 +1,6 @@
 {
     "u_d": {
+        "call": "url-metrics",
         "description": "URL metrics on a domain level",
         "c": [
             "ut",
@@ -16,6 +17,7 @@
         ]
     },
     "u_s": {
+        "call": "url-metrics",
         "description": "URL metrics on a subdomain level",
         "c": [
             "ut",
@@ -34,6 +36,7 @@
         ]
     },
     "u_p": {
+        "call": "url-metrics",
         "description": "URL metrics on a page level",
         "c": [
             "ut",
@@ -51,6 +54,7 @@
         ]
     },
     "t": {
+        "call": "top-pages",
         "description": "Top pages report defaults",
         "c": [
             "ut",
@@ -63,6 +67,7 @@
         ]
     },
     "a_ptd": {
+        "call": "anchor-text",
         "description": "Anchor text report, phrase to domain",
         "scope": "phrase_to_domain",
         "c": [
@@ -72,6 +77,7 @@
         ]
     },
     "a_pts": {
+        "call": "anchor-text",
         "description": "Anchor text report, phrase to subdomain",
         "scope": "phrase_to_subdomain",
         "c": [
@@ -82,6 +88,7 @@
         ]
     },
     "a_ptp": {
+        "call": "anchor-text",
         "description": "Anchor text report, phrase to page",
         "scope": "phrase_to_page",
         "c": [
@@ -92,6 +99,7 @@
         ]
     },
     "a_ttd": {
+        "call": "anchor-text",
         "description": "Anchor text report, term to domain",
         "scope": "term_to_domain",
         "c": [
@@ -101,6 +109,7 @@
         ]
     },
     "a_tts": {
+        "call": "anchor-text",
         "description": "Anchor text report, term to subdomain",
         "scope": "term_to_subdomain",
         "c": [
@@ -111,6 +120,7 @@
         ]
     },
     "a_ttp": {
+        "call": "anchor-text",
         "description": "Anchor text report, term to page",
         "scope": "term_to_page",
         "c": [
@@ -121,6 +131,7 @@
         ]
     },
     "l_dtd": {
+        "call": "links",
         "description": "Incoming links to specified domain, one per linking domain",
         "scope": "domain_to_domain",
         "sort": "domain_authority",
@@ -142,6 +153,7 @@
         ]
     },
     "l_dts": {
+        "call": "links",
         "description": "Incoming links to specified subdomain, one per linking domain",
         "scope": "domain_to_subdomain",
         "sort": "domain_authority",
@@ -163,6 +175,7 @@
         ]
     },
     "l_dtp": {
+        "call": "links",
         "description": "Incoming links to specified page, one per linking domain",
         "scope": "domain_to_page",
         "sort": "domain_authority",
@@ -183,6 +196,7 @@
         ]
     },
     "l_ptd": {
+        "call": "links",
         "description": "Incoming links from pages to specified domain",
         "scope": "page_to_domain",
         "sort": "page_authority",
@@ -204,6 +218,7 @@
         ]
     },
     "l_pts": {
+        "call": "links",
         "description": "Incoming links from pages to specified subdomain",
         "scope": "page_to_subdomain",
         "sort": "page_authority",
@@ -225,6 +240,7 @@
         ]
     },
     "l_ptp": {
+        "call": "links",
         "description": "Incoming links from pages to specified page",
         "scope": "page_to_page",
         "sort": "page_authority",

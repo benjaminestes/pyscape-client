@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import argparse
 
 def build_parser():
@@ -70,3 +68,57 @@ def build_parser():
                             help = 'write data in CSV format; default')
    
     return parser
+
+def get_preset(args):
+    """Determine the label of the preset the user wants."""
+
+    if args.command == 'metrics' or args.command == 'bulk-metrics':
+        if args.domain_mode:
+            preset = 'u_d'
+        elif args.subdomain_mode:
+            preset = 'u_s'
+        elif args.page_mode:
+            preset = 'u_p'
+
+    elif args.command == 'top':
+        preset = 't'
+
+    elif args.command == 'bulk-metrics':
+        if args.domain_mode:
+            preset = 'u_d'
+        elif args.subdomain_mode:
+            preset = 'u_s'
+        elif args.page_mode:
+            preset = 'u_p'
+
+    elif args.command == 'links':
+        preset = 'l_'
+
+        if args.one_page:
+            preset += 'dt'
+        elif args.many_pages:
+            preset += 'pt'
+
+        if args.domain_mode:
+            preset += 'd'
+        elif args.subdomain_mode:
+            preset += 's'
+        elif args.page_mode:
+            preset += 'p'
+
+    elif args.command == 'anchor':
+        preset = 'a_'
+
+        if args.phrase:
+            preset += 'pt'
+        elif args.term:
+            preset += 'tt'
+        
+        if args.domain_mode:
+            preset += 'd'
+        elif args.subdomain_mode:
+            preset += 's'
+        elif args.page_mode:
+            preset += 'p'
+
+    return preset
