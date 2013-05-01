@@ -35,11 +35,14 @@ def to_csv(outfile, ph, preset, data):
             line.append(record[k])
         output.append(line)
 
-    writer = csv.writer(outfile, delimiter = ',',
-                        quotechar = '"',
-                        dialect = 'excel',
-                        quoting = csv.QUOTE_ALL)
-    writer.writerows(output)
+    try:
+        writer = csv.writer(outfile, delimiter = ',',
+                            quotechar = '"',
+                            dialect = 'excel',
+                            quoting = csv.QUOTE_ALL)
+        writer.writerows(output)
+    except:
+        pass
 
 def ose_style(outfile, data):
 
