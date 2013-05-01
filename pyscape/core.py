@@ -4,6 +4,8 @@ import json
 import urllib.request
 import urllib.parse
 import base64
+import hmac
+import hashlib
 import time
 
 class Pyscape:
@@ -39,21 +41,35 @@ class Pyscape:
 
         self.baseurl = 'http://lsapi.seomoz.com/linkscape/' 
         auth_string = access_id + ':' + secret_key
+        
+        self.access_id = access_id
+        self.secret_key = secret_key
+
         base64string = base64.b64encode(auth_string.encode('utf-8'))
         self.auth = base64string.decode('utf-8') 
         self.reporting = False
         self.set_timeout(level)
+
+    def signature(self, expires):
+        toSign  = '%s\n%i' % (self.access_id, expires)
+        return base64.b64encode(hmac.new(self.secret_key.encode('ascii'), toSign.encode('ascii'), hashlib.sha1).digest())
     
     def call(self, method, url, params = None):
         "the fundamental unit of retrieving information"
 
         json_data = None
 
+        # Add authentication data
+        # expires = int(time.time() + 300)
+        
         query_string = '&'.join([k + '=' + urllib.parse.quote(str(v)) \
                                  for (k, v) in params.items()])
+
+        # Auth string must appear in order?
+        # auth = '&AccessID=' + self.access_id + '&Expires=' + str(expires) + '&Signature=' + self.signature(expires).decode('ascii')
         
         full_query = self.baseurl + method + '/' + \
-                     url + '?' + query_string
+                     url + '?' + query_string 
         
         # Debug
         # print(full_query)
@@ -99,9 +115,9 @@ class Pyscape:
         elif level == 'pro':
             self.timeout = 5
         elif level == 'full':
-            self.timeout = .15
+            self.timeout = .4
         else:
-            self.timeout = .15
+            self.timeout = .3
 
     def sleep(self):
         time.sleep(self.get_timeout())
@@ -160,7 +176,7 @@ class Pyscape:
                   'Offset': offset,
                   'Cols': cols}
 
-        return self.call(Pyscape.U_CALL, url, params)
+        return self.call(Pyscape.T_CALL, url, params)
 
 
     def query_anchor_text(self, url, cols, scope = A_PTP):
@@ -182,19 +198,31 @@ class Pyscape:
         
         # Limited to 100,000 call_links total
         for i in range(int(100000 / step)):
-            self.sleep()
 
             self.report('Grabbing URLs [', offset, ']')
 
-            call_data = self.call_links(url, tc, sc, lc, scope,
-                                        sort, offset, step)
+            # Re-tries in case of false failure
+
+            for j in range(5):
+                self.sleep()
+                call_data = self.call_links(url, tc, sc, lc, scope,
+                                            sort, offset, step)
+
+                # If there is no data, try again a few times
+                if not call_data:
+                    continue
+                else:
+                # If there is data, go to the next loop
+                    break  
+                    
             if call_data:
-                # If data was received...
+                # When exiting retry loop, determine whether there is
+                # data to write
                 data.extend(call_data)
+                offset = offset + step
+                continue
             else:
-                # If call() failed to return data, stop collecting
-                break   
-            offset = offset + step
+                break
 
         return data
 
@@ -210,19 +238,24 @@ class Pyscape:
 
         # Limited to 10,000 URLs
         for i in range(int(10000 / step)):
-            self.sleep()
 
             self.report('Grabbing URLs [', offset, ']')
 
-            call_data = self.call_top_pages(url, cols, offset, step)
+            for j in range(5):
+                self.sleep()
+                call_data = self.call_top_pages(url, cols, offset, step)
+                
+                if not call_data:
+                    continue
+                else:
+                    break
 
             if call_data:
-                # If data was received...
                 data.extend(call_data)
+                offset = offset + step
+                continue
             else:
-                # If call() failed to return data, stop collecting
                 break   
-            offset = offset + step
 
         return data
 
@@ -231,4 +264,4 @@ class Pyscape:
 
         self.report('Grabbing URL metrics.')
 
-        return pys.call_url_metrics(url, cols)
+        return self.call_url_metrics(url, cols)
