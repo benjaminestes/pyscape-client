@@ -3,6 +3,14 @@
 A script to grab data from the [Mozscape 
 API](http://apiwiki.seomoz.org/). Requires Python &ge; 3.2.
 
+## Disclaimer
+
+_I am not representing SEOmoz through my development of this tool; it
+is completely independent. Neither SEOmoz nor me should be held accountable
+if this doesn't work as expected._
+
+That said, I hope you find this useful!
+
 ## Getting started
 
 To use Pyscape you will need:
@@ -31,14 +39,15 @@ limiting](http://apiwiki.seomoz.org/rate-limiting) you need.
 ## Usage
 
 
-```bash
-usage: pyscape [-h] [-d | -s | -p] [-o | -m | -f | -t] [-j | -c]
-               {metrics,bulk-metrics,anchor,top,links} source dest
+```
+usage: pyscape.py [-h] [-d | -s | -p] [-o | -m | -f | -t] [-j | -c]
+                  {metrics,bulk-metrics,anchor,top,links,ose-style} source
+                  dest
 
 Interface with the Mozscape API to provide link metrics
 
 positional arguments:
-  {metrics,bulk-metrics,anchor,top,links}
+  {metrics,bulk-metrics,anchor,top,links,ose-style}
                         select operating mode
   source                specify a URL or text file as appropriate
   dest                  specify an output file
@@ -59,9 +68,28 @@ optional arguments:
 
 ### Examples
 
-```bash
-./pyscape links www.example.com links.csv -d -m
+Notes:
+
+1. URLs must not be preceded by http:// or https://. Currently there is no built in filtering for this.
+2. On Windows you'll probably have to prepend "python" or "python3" to all of the following calls.
+
+```
+pyscape.py links www.example.com links.csv -d -m
 # export a CSV with all available links to example.com
+
+pyscape.py ose-style www.example.com report.csv -d -o
+# export a CSV matching OSE's format with all domains
+# linking to the target domain
+
+pyscape.py bulk-metrics urls.txt output.csv -p
+# export page level metrics for a list of urls
+
+pyscape.py bulk-metrics urls.txt output.csv -d
+# export domain level metrics for a list of urls
+
+pyscape.py anchor www.example.com anchor.csv -d -f
+# export CSV with anchor text phrases pointed at all
+# pages on www.example.com
 ```
 
 ## OSE-style reports
@@ -71,7 +99,8 @@ Often use of the Mozscape API is an extension of working with
 10,000 lines it provides are insufficient, we can use the command 
 line to extend the amount of information available. Or, if we're 
 just trying to pull a lot of reports it will be more convenient to 
-use a command line tool.
+use a command line tool. Use the `ose-style` command to generate
+reports that match the formatting you would get from OSE.
 
 ## Thanks
 
