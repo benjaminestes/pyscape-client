@@ -3,6 +3,11 @@
 A script to grab data from the [Mozscape 
 API](http://apiwiki.seomoz.org/). Requires Python &ge; 3.2.
 
+For the most regularly updated guide to usage, please visit
+[the pretty site](http://projects.listlesstides.com/Pyscape). This
+readme is focused on manipulating the core elements of the script
+instead of general usage.
+
 ## Disclaimer
 
 _I am not representing SEOmoz through my development of this tool; it
