@@ -130,6 +130,126 @@
             "atuep"
         ]
     },
+    "o_dtd": {
+        "call": "links",
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "domain_to_domain",
+        "sort": "domain_authority",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "ut",
+            "uipl",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt",
+            "lf"
+        ]
+    },
+    "o_dts": {
+        "call": "links",
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "domain_to_subdomain",
+        "sort": "domain_authority",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "ut",
+            "uipl",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt",
+            "lf"
+        ]
+    },
+    "o_dtp": {
+        "call": "links",
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "domain_to_page",
+        "sort": "domain_authority",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "ut",
+            "uipl",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt",
+            "lf"
+        ]
+    },
+    "o_ptd": {
+        "call": "links",
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "page_to_domain",
+        "sort": "page_authority",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "ut",
+            "uipl",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt",
+            "lf"
+        ]
+    },
+    "o_pts": {
+        "call": "links",
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "page_to_subdomain",
+        "sort": "page_authority",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "ut",
+            "uipl",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt",
+            "lf"
+        ]
+    },
+    "o_ptp": {
+        "call": "links",
+        "description": "Incoming links to specified domain, one per linking domain",
+        "scope": "page_to_page",
+        "sort": "page_authority",
+        "tc": [
+            "luuu"
+        ],
+        "sc": [
+            "uu",
+            "ut",
+            "uipl",
+            "upa",
+            "pda"
+        ],
+        "lc": [
+            "lnt",
+            "lf"
+        ]
+    },
     "l_dtd": {
         "call": "links",
         "description": "Incoming links to specified domain, one per linking domain",

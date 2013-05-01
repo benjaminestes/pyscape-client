@@ -30,10 +30,10 @@ def main():
     url = args.source
     pys = Pyscape(*creds)
     pys.set_reporting(True)
-
     ph.set_preset(preset)
 
-    if args.command != 'bulk-metrics':
+    if args.command != 'bulk-metrics' and \
+       args.command != 'ose-style':
         data = pys.query(url, ph.get_args())
     elif args.command == 'bulk-metrics':
         # replace this call with custom.py 
@@ -42,6 +42,12 @@ def main():
             for line in s:
                 urls.append(line.rstrip())
         data = custom.get_bulk_metrics(pys, urls, ph.get_args())
+    elif args.command == 'ose-style':
+        data = pys.query(url, ph.get_args())
+        print("Writing OSE-style CSV.")
+        with open(args.dest, 'w') as outfile:
+            output.ose_style(outfile, data)
+        sys.exit()
 
     # write output
     print('Writing file.')

@@ -11,7 +11,8 @@ def build_parser():
                     'bulk-metrics',
                     'anchor',
                     'top',
-                    'links']
+                    'links',
+                    'ose-style']
 
     parser.add_argument('command', 
                         choices = command_opts,
@@ -114,6 +115,21 @@ def get_preset(args):
         elif args.term:
             preset += 'tt'
         
+        if args.domain_mode:
+            preset += 'd'
+        elif args.subdomain_mode:
+            preset += 's'
+        elif args.page_mode:
+            preset += 'p'
+
+    elif args.command == 'ose-style':
+        preset = 'o_'
+
+        if args.one_page:
+            preset += 'dt'
+        elif args.many_pages:
+            preset += 'pt'
+
         if args.domain_mode:
             preset += 'd'
         elif args.subdomain_mode:
