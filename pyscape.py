@@ -51,7 +51,7 @@ def main():
 
     # write output
     print('Writing file.')
-    with open(args.dest, 'w') as outfile:
+    with open(args.dest, 'w', newline='') as outfile:
         if args.json:
             output.to_json(outfile, data)
         elif args.csv:
