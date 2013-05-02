@@ -45,7 +45,7 @@ def main():
     elif args.command == 'ose-style':
         data = pys.query(url, ph.get_args())
         print("Writing OSE-style CSV.")
-        with open(args.dest, 'w') as outfile:
+        with open(args.dest, 'w', newline='') as outfile:
             output.ose_style(outfile, data)
         sys.exit()
 
