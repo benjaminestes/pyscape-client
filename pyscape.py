@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import codecs
 
 from pyscape.core import Pyscape
 from pyscape.util.flagindex import FlagIndex
@@ -45,13 +46,13 @@ def main():
     elif args.command == 'ose-style':
         data = pys.query(url, ph.get_args())
         print("Writing OSE-style CSV.")
-        with open(args.dest, 'w', newline='') as outfile:
+        with codecs.open(args.dest, 'w', encoding='utf-8') as outfile:
             output.ose_style(outfile, data)
         sys.exit()
 
     # write output
     print('Writing file.')
-    with open(args.dest, 'w', newline='') as outfile:
+    with codecs.open(args.dest, 'w', encoding='utf-8') as outfile:
         if args.json:
             output.to_json(outfile, data)
         elif args.csv:
