@@ -10,6 +10,7 @@ from pyscape.util import custom
 from pyscape.util import credentials
 from pyscape.util import output
 
+from pyscape.util.clean import *
 from src.cli import *
 
 def main():
@@ -28,7 +29,11 @@ def main():
     with open('data/defaults.json') as d:
         ph = PresetHandler(d, flag_index)
 
-    url = args.source
+    # Make sure URL is safe
+    # This is OK for bulk-metrics since that uses
+    # args.source directly
+    url = clean_url(args.source)
+
     pys = Pyscape(*creds)
     pys.set_reporting(True)
     ph.set_preset(preset)
@@ -41,7 +46,8 @@ def main():
         urls = []
         with open(args.source, 'r') as s:
             for line in s:
-                urls.append(line.rstrip())
+                # Make sure each line is clean
+                urls.append(clean_url(line.rstrip()))
         data = custom.get_bulk_metrics(pys, urls, ph.get_args())
     elif args.command == 'ose-style':
         data = pys.query(url, ph.get_args())
