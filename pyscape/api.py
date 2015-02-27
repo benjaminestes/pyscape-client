@@ -9,16 +9,126 @@ import hashlib
 import time
 
 class Pyscape:
-    "Facilitate grabbing data from Mozscape API."
+    "Facilitate grabbing data from Moz API."
+
+    def __init__(self, access_id, secret_key, level):
+        "generates basic auth credentials"
+
+        self.api_url = 'http://lsapi.seomoz.com/linkscape/' 
+        auth_string = access_id + ':' + secret_key
+        
+        self.access_id = access_id
+        self.secret_key = secret_key
+
+        base64string = base64.b64encode(auth_string.encode('utf-8'))
+        self.auth = base64string.decode('utf-8') 
+        self.reporting = True
+        self.set_timeout(level)
+
+    # haven't implemented signing
+    def signature(self, expires):
+        toSign  = '%s\n%i' % (self.access_id, expires)
+        return base64.b64encode(hmac.new(self.secret_key.encode('ascii'), toSign.encode('ascii'), hashlib.sha1).digest())
+    
+    def set_timeout(self, level):
+        if level == 'free':
+            self.timeout = 10
+        elif level == 'pro':
+            self.timeout = 5
+        elif level == 'full':
+            self.timeout = .4
+        else:
+            self.timeout = .3
+
+    def sleep(self):
+        time.sleep(self.timeout)
+
+    def set_reporting(self, report_mode = False):
+        """Determine whether class outputs data to screen."""
+
+        self.reporting = report_mode
+    
+    def report(self, *message):
+        """If turned on, print reports to screen."""
+        
+        if self.reporting:
+            print(*message, sep = '')
+    
+    def get(self, endpoint, url, params = None):
+        "the fundamental unit of retrieving information"
+
+        json_data = None
+
+        # Add authentication data
+        # expires = int(time.time() + 300)
+        
+        print(params)
+        
+        query_string = ''
+        if params:
+            query_string = '?' + '&'.join([k + '=' + urllib.parse.quote(str(v)) \
+                                     for (k, v) in params.items()])
+
+        # Auth string must appear in order?
+        # auth = '&AccessID=' + self.access_id + '&Expires=' + str(expires) + '&Signature=' + self.signature(expires).decode('ascii')
+        
+        full_query = self.api_url + endpoint + '/' + \
+                     url + query_string 
+                     
+        print(full_query)
+
+        request = urllib.request.Request(full_query)
+        request.add_header("Authorization", "Basic %s" % self.auth)
+
+        raw = urllib.request.urlopen(request)
+        print(raw.status)
+        json_data = json.loads(raw.read().decode('utf-8'))
+
+            # functions that call this method look for
+            # an output of None to stop retrieving info
+
+        return json_data
+
+    def get_anchor_text(self, url, **params):
+        """
+        
+        Docs: http://moz.com/help/guides/moz-api/mozscape/api-reference/anchor-text-metrics
+        """
+       
+        return self.get('anchor-text', url, params=params)
+
+    def get_links(self, url, **params):
+        """
+        
+        Docs: http://moz.com/help/guides/moz-api/mozscape/api-reference/link-metrics
+        """
+        return self.get('links', url, params)
+
+    def get_url_metrics(self, url, **params):
+        """
+        
+        Docs: http://moz.com/help/guides/moz-api/mozscape/api-reference/url-metrics
+        """
+        # For consistency, all methods return lists
+        # response = []
+        return self.get('url-metrics', url, params)
+
+    def get_top_pages(self, url, **params):
+        """
+        
+        Docs: http://moz.com/help/guides/moz-api/mozscape/api-reference/top-pages
+        """
+        return self.get('top-pages', url, params)
+
+###################
+################### Queries are helper functions that are
+################### to complex to being included?
+###################
 
     # I don't think defining all of the constants was necessary,
     # might go back and swap them out
     
     # API call names
-    A_CALL = 'anchor-text'
-    L_CALL = 'links'
-    U_CALL = 'url-metrics'
-    T_CALL = 'top-pages'
 
     # Links API scope names
     L_PTP = 'page_to_page'
@@ -35,57 +145,6 @@ class Pyscape:
     A_TTP = 'term_to_page'
     A_TTP = 'term_to_subdomain'
     A_TTP = 'term_to_domain'
-
-    def __init__(self, access_id, secret_key, level):
-        "generates basic auth credentials"
-
-        self.baseurl = 'http://lsapi.seomoz.com/linkscape/' 
-        auth_string = access_id + ':' + secret_key
-        
-        self.access_id = access_id
-        self.secret_key = secret_key
-
-        base64string = base64.b64encode(auth_string.encode('utf-8'))
-        self.auth = base64string.decode('utf-8') 
-        self.reporting = False
-        self.set_timeout(level)
-
-    def signature(self, expires):
-        toSign  = '%s\n%i' % (self.access_id, expires)
-        return base64.b64encode(hmac.new(self.secret_key.encode('ascii'), toSign.encode('ascii'), hashlib.sha1).digest())
-    
-    def call(self, method, url, params = None):
-        "the fundamental unit of retrieving information"
-
-        json_data = None
-
-        # Add authentication data
-        # expires = int(time.time() + 300)
-        
-        query_string = '&'.join([k + '=' + urllib.parse.quote(str(v)) \
-                                 for (k, v) in params.items()])
-
-        # Auth string must appear in order?
-        # auth = '&AccessID=' + self.access_id + '&Expires=' + str(expires) + '&Signature=' + self.signature(expires).decode('ascii')
-        
-        full_query = self.baseurl + method + '/' + \
-                     url + '?' + query_string 
-        
-        # Debug
-        # print(full_query)
-
-        request = urllib.request.Request(full_query)
-        request.add_header("Authorization", "Basic %s" % self.auth)
-
-        try:
-            raw = urllib.request.urlopen(request)
-            json_data = json.loads(raw.read().decode('utf-8'))
-        except:
-            # functions that call this method look for
-            # an output of None to stop retrieving info
-            pass
-
-        return json_data
 
     def query(self, url, args):
         """Given arguments, run appropriate query."""
@@ -106,97 +165,24 @@ class Pyscape:
         else:
             return None
 
-    def get_timeout(self):
-        return self.timeout
-
-    def set_timeout(self, level):
-        if level == 'free':
-            self.timeout = 10
-        elif level == 'pro':
-            self.timeout = 5
-        elif level == 'full':
-            self.timeout = .4
-        else:
-            self.timeout = .3
-
-    def sleep(self):
-        time.sleep(self.get_timeout())
-
-    def set_reporting(self, report_mode = False):
-        """Determine whether class outputs data to screen."""
-
-        self.reporting = report_mode
-    
-    def report(self, *message):
-        """If turned on, print reports to screen."""
-        
-        if self.reporting:
-            print(*message, sep = '')
-
-
-    def call_anchor_text(self, url, cols = 2, scope = A_PTP):
-        """perform a call to the anchor-text API"""
-        
-        params = {'Scope': scope,
-                  'Sort': 'domains_linking_page',
-                  'Cols': cols}
-        
-        return self.call(Pyscape.A_CALL, url, params)
-
-    def call_links(self, url, tc = 4, sc = 4, lc = 2, scope = L_PTP,
-              sort = '', offset = 0, step = 50):
-        "perform a call to the links API"
-
-        params = {'SourceCols': sc,
-                  'TargetCols': tc,
-                  'LinkCols': lc,
-                  'Scope': scope,
-                  'Sort': sort,
-                  'Limit': step,
-                  'Offset': offset}
-
-        return self.call(Pyscape.L_CALL, url, params)
-
-    def call_url_metrics(self, url, cols = 4):
-        "perform a call to the url-metrics API"
-
-        params = {'Cols': cols}
-
-        # For consistency, all methods return lists that
-        # can be written to CSV
-        data = []
-        data.append(self.call(Pyscape.U_CALL, url, params))
-
-        return data
-
-    def call_top_pages(self, url, cols = 4, offset = 0, step = 50):
-        "perform a call to the top-pages API"
-
-        params = {'Limit': step,
-                  'Offset': offset,
-                  'Cols': cols}
-
-        return self.call(Pyscape.T_CALL, url, params)
-
-
     def query_anchor_text(self, url, cols, scope = A_PTP):
         """run a query for anchor text"""
 
         self.report('Grabbing anchor text.')
         
         # anchor text query requires only one call
-        return self.call_anchor_text(url, cols, scope)
+        return self.get_anchor_text(url, cols, scope)
 
     def query_links(self, url, tc, sc, lc, scope, sort):
-        """run a query for call_links"""
+        """run a query for get_links"""
 
         data = []
 
-        # API documentation says 50 call_links per request is optimal
+        # API documentation says 50 get_links per request is optimal
         offset = 0
         step = 50
         
-        # Limited to 100,000 call_links total
+        # Limited to 100,000 get_links total
         for i in range(int(100000 / step)):
 
             self.report('Grabbing URLs [', offset, ']')
@@ -205,7 +191,7 @@ class Pyscape:
 
             for j in range(5):
                 self.sleep()
-                call_data = self.call_links(url, tc, sc, lc, scope,
+                call_data = self.get_links(url, tc, sc, lc, scope,
                                             sort, offset, step)
 
                 # If there is no data, try again a few times
@@ -231,7 +217,7 @@ class Pyscape:
 
         data = []
             
-        # API documentation says that 50 call_links per
+        # API documentation says that 50 get_links per
         # request is optimal
         offset = 0
         step = 50
@@ -243,7 +229,7 @@ class Pyscape:
 
             for j in range(5):
                 self.sleep()
-                call_data = self.call_top_pages(url, cols, offset, step)
+                call_data = self.get_top_pages(url, cols, offset, step)
                 
                 if not call_data:
                     continue
@@ -264,4 +250,4 @@ class Pyscape:
 
         self.report('Grabbing URL metrics.')
 
-        return self.call_url_metrics(url, cols)
+        return self.get_url_metrics(url, cols)
