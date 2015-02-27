@@ -32,7 +32,10 @@ def to_csv(outfile, ph, preset, data):
     for record in data:
         line = []
         for k in keys:
-            line.append(record[k])
+            if k in record:
+                line.append(record[k])
+            else:
+                line.append('')
         output.append(line)
 
     try:
