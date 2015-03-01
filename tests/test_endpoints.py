@@ -23,7 +23,7 @@ class TestSequenceFunctions(unittest.TestCase):
         r = self.p.get_links('distilled.net')
         return self.assertTrue('luuu' in r.json()[0])
         
-    def test_get_anchor_text(self):
+    def test_get_top_pages(self):
         r = self.p.get_anchor_text('distilled.net')
         return self.assertTrue('uu' in r.json()[0])
 
