@@ -8,8 +8,8 @@ from config import VALID_KEYS, BAD_KEYS
 
 class PyscapeAuthTestCase(unittest.TestCase):
     def setUp(self):
-        valid_instance = Pyscape(**VALID_KEYS)
-        bad_instance = Pyscape(**BAD_KEYS)
+        self.valid_instance = Pyscape(**VALID_KEYS)
+        self.bad_instance = Pyscape(**BAD_KEYS)
 
     def test_auth_success(self):
         """Test something."""
