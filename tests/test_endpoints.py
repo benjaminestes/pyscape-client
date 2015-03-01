@@ -25,7 +25,7 @@ class TestSequenceFunctions(unittest.TestCase):
         
     def test_get_anchor_text(self):
         r = self.p.get_anchor_text('distilled.net')
-        return self.assertEqual('uu' in r.json()[0])
+        return self.assertTrue('uu' in r.json()[0])
 
 if __name__ == '__main__':
     unittest.main()
