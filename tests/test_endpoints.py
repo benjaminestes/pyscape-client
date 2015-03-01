@@ -24,7 +24,7 @@ class TestSequenceFunctions(unittest.TestCase):
         return self.assertTrue('luuu' in r.json()[0])
         
     def test_get_top_pages(self):
-        r = self.p.get_anchor_text('distilled.net')
+        r = self.p.get_top_pages('distilled.net')
         return self.assertTrue('uu' in r.json()[0])
 
 if __name__ == '__main__':
