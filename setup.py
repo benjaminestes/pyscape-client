@@ -8,17 +8,10 @@ from setuptools import setup
 setup(
     name='pyscape-client',
     version='2015.02b2',
-
     description='Facilitate grabbing data from Moz API.',
-
-    # The project's main homepage.
     url='https://github.com/benjaminestes/pyscape',
-
-    # Author details
     author='Benjamin Estes',
     author_email='benjamin.estes@distilled.net',
-
-    # Choose your license
     license='MIT',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
