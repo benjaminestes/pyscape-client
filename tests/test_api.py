@@ -1,15 +1,14 @@
 #! /usr/bin/env/ python3
 
-import os
-import unittest
-import sys
+from pyscape import Pyscape
+
+from .config import VALID_KEYS
 
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        p = Pyscape(os.environ.get('PYSCAPE_ACCESSID'),
-                    os.environ.get('PYSCAPE_SECRETKEY'))
+        p = Pyscape(**VALID_KEYS)
         pass
 
 if __name__ == '__main__':
-    sys.exit(unittest.main())
+    unittest.main()
