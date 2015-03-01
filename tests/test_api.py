@@ -9,7 +9,10 @@ from config import VALID_KEYS
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        p = Pyscape(**VALID_KEYS)
+        self.p = Pyscape(**VALID_KEYS)
+        pass
+        
+    def test_call_format(self):
         pass
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@ class Pyscape(EndpointsMixin):
         return params
     
     def get(self, endpoint, url = '', params = {}):
-        "the fundamental unit of retrieving information. returns none if no response."
+        "the fundamental unit of retrieving information."
         params = self._add_signature(params)
         
         # Filters are passed as a list, but need to be separated
@@ -55,20 +55,28 @@ class Pyscape(EndpointsMixin):
         return requests.post(call, params = params, data=json.dumps(urls))
         
     def _get_bitflag(self, field):
-        return FIELD_INDEX[field]['flag']
+        return FIELDS[field]['flag']
         
     def _add_smart_fields(self, endpoint, params = {}):
-    
+            # Want to avoid adding 'Scope' as a parameter if it doesn't
+            # exist, but need to use it as key for looking up defaults
+            # regardless.
+        if 'Scope' in params:
+            scope = params['Scope']
+        else:
+            scope = None
+
         if all(k not in params for k in ['Cols','SourceCols','TargetCols','LinkCols']):
+
             # Shortcut for readability
-            field_groups = DEFAULTS[endpoint][params['Scope']]['Fields']
+            field_groups = DEFAULTS[endpoint][scope]['Fields']
             for group in field_groups:
                 bit_field = 0
                 for field in field_groups[group]:
                     bit_field = bit_field | self._get_bitflag(field)
                 params[group] = bit_field
         
-        if 'Sort' in DEFAULTS[endpoint][params['Scope']] and 'Sort' not in params:
-            params['Sort'] = DEFAULTS[endpoint][params['Scope']]['Sort']
+        if 'Sort' in DEFAULTS[endpoint][scope] and 'Sort' not in params:
+            params['Sort'] = DEFAULTS[endpoint][scope]['Sort']
 
         return params
