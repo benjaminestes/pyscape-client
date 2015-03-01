@@ -4,43 +4,31 @@ import sys
 import json
 
 from pyscape import Pyscape
-from .cli import *
+from cli import *
+
+urls = ['distilled.net','moz.com','cnn.com']
+
+def batch_urls(urls, n):
+    """n = size of batches. 10 is recommended."""
+    for i in range(0, len(urls), n):
+        yield urls[i:i+n]
 
 def main():
-    parser = build_parser()
-    args = parser.parse_args()
+    # args = build_parser().parse_args()
 
     # load API credentials
-    with open('keys.json', 'r') as k:
+    with open('./keys.json', 'r') as k:
         keys = json.load(k)
         
     p = Pyscape(**keys)
-
-    if args.command != 'bulk-metrics' and \
-       args.command != 'ose-style':
-        data = pys.query(url, ph.get_args())
-    elif args.command == 'bulk-metrics':
-        # replace this call with custom.py 
-        urls = []
-        with open(args.source, 'r') as s:
-            for line in s:
-                # Make sure each line is clean
-                urls.append(clean_url(line.rstrip()))
-        data = custom.get_bulk_metrics(pys, urls, ph.get_args())
-    elif args.command == 'ose-style':
-        data = pys.query(url, ph.get_args())
-        print("Writing OSE-style CSV.")
-        with codecs.open(args.dest, 'w', encoding='utf-8') as outfile:
-            output.ose_style(outfile, data)
-        sys.exit()
-
-    # write output
-    print('Writing file.')
-    with codecs.open(args.dest, 'w', encoding='utf-8') as outfile:
-        if args.json:
-            output.to_json(outfile, data)
-        elif args.csv:
-            output.to_csv(outfile, ph, preset, data)
+    
+    data = []
+    for batch in batch_urls(urls, 2):
+        data.extend(p.batch_url_metrics(batch).json())
+    print(data)
+    
+    #url = 'distilled.net'
+    #print(p.get_url_metrics(url).json())
 
 if __name__ == '__main__':
     sys.exit(main())
