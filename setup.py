@@ -6,8 +6,8 @@ import sys
 from setuptools import setup
 
 setup(
-    name='pyscape',
-    version='2015.02b1',
+    name='pyscape-client',
+    version='2015.02b2',
 
     description='Facilitate grabbing data from Moz API.',
 
@@ -27,11 +27,11 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 4 - Alpha',
+        'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
+        # 'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
@@ -46,7 +46,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    # packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    packages=['pyscape'],
 
     # List run-time dependencies here.  These will be installed by pip when your
     # project is installed. For an analysis of "install_requires" vs pip's
@@ -61,5 +61,5 @@ setup(
     #    'console_scripts': [
     #       'sample=sample:main',
     #    ],
-    },
+    #},
 )
