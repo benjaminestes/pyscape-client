@@ -1,5 +1,4 @@
 import os
-import unittest
 
 # These values configured in Snap CI environment.
 # http://www.snap-ci.com
