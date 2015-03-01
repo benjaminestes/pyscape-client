@@ -1,6 +1,5 @@
 #! /usr/bin/env/ python3
 
-from pyscape.util.clean import *
 import unittest
 import sys
 

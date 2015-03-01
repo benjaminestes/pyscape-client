@@ -1,4 +1,4 @@
-FIELD_INDEX = {
+FIELDS = {
     "lupeid": {
         "category": "target-metrics",
         "flag": 128,
