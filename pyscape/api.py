@@ -14,7 +14,7 @@ from .fields import FIELDS
 class Pyscape(EndpointsMixin):
     "Facilitate grabbing data from Moz API."
 
-    def __init__(self, access_id, secret_key, level):
+    def __init__(self, access_id, secret_key):
         "generates basic auth credentials"
         self.api_url = 'http://lsapi.seomoz.com/linkscape/'         
         self.access_id = access_id
