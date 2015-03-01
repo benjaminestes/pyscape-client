@@ -4,7 +4,7 @@ import unittest
 
 from pyscape import Pyscape
 
-from .config import VALID_KEYS, BAD_KEYS
+from config import VALID_KEYS, BAD_KEYS
 
 class TestSequenceFunctions(unittest.TestCase):
 
