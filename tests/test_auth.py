@@ -13,11 +13,11 @@ class PyscapeAuthTestCase(unittest.TestCase):
 
     def test_auth_success(self):
         """Test something."""
-        self.assertEqual(200, valid_instance.get_index_stats().status_code)
+        self.assertEqual(200, self.valid_instance.get_index_stats().status_code)
     
     def test_auth_fail(self):
         """Test something."""
-        self.assertEqual(403, bad_instance.get_index_stats().status_code)
+        self.assertEqual(403, self.bad_instance.get_index_stats().status_code)
 
 if __name__ == '__main__':
     unittest.main()
