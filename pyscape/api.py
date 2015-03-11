@@ -24,6 +24,12 @@ class Pyscape(EndpointsMixin):
         return '<Pyscape: %s>' % (self.access_id)
 
     def _add_signature(self, params = {}):
+        """Adds key value pairs necessary to authenticate a Moz API request.
+        
+        See documentation:
+        http://moz.com/help/guides/moz-api/mozscape/getting-started-with-mozscape/signed-authentication
+        """
+
         expires = int(time.time() + 300)
         toSign  = '%s\n%i' % (self.access_id, expires)
 
@@ -34,22 +40,17 @@ class Pyscape(EndpointsMixin):
         return params
     
     def get(self, endpoint, url = '', params = {}):
-        "the fundamental unit of retrieving information."
         params = self._add_signature(params)
-        
         # Filters are passed as a list, but need to be separated
         # with '+' when put in URL.
         if 'Filters' in params:
             params['Filters'] = '+'.join(params['Filters'])
-             
         call = ''.join([self.api_url, endpoint, '/', url])
-
+        
         return requests.get(call, params = params)
     
     def post(self, endpoint, urls = [], params = {}):
-        "Filters don't apply to url-metrics."
         params = self._add_signature(params)
-        
         call = ''.join([self.api_url, endpoint, '/'])
         
         return requests.post(call, params = params, data=json.dumps(urls))
@@ -58,9 +59,11 @@ class Pyscape(EndpointsMixin):
         return FIELDS[field]['flag']
         
     def _add_smart_fields(self, endpoint, params = {}):
-            # Want to avoid adding 'Scope' as a parameter if it doesn't
-            # exist, but need to use it as key for looking up defaults
-            # regardless.
+        """If no fields are requested, adds default fields to supply
+        a meaningful response."""
+        # Want to avoid adding 'Scope' as a parameter if it doesn't
+        # exist, but need to use it as key for looking up defaults
+        # regardless.
         if 'Scope' in params:
             scope = params['Scope']
         else:
