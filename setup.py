@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name='pyscape-client',
-    version='2015.02b2',
+    version='2015.03',
     description='Facilitate grabbing data from Moz API.',
     url='https://github.com/benjaminestes/pyscape',
     author='Benjamin Estes',
@@ -55,5 +55,5 @@ setup(
     #      'pyscape=pyscape/cli:main',
     #   ],
     #},
-    scripts=['bin/pyscape'],
+    #scripts=['bin/pyscape'],
 )

@@ -43,12 +43,15 @@ def write_csv(outfile, data):
 
     for record in data:
         line = []
-        for k in keys:
-            if k in record:
-                line.append(record[k])
-            else:
-                line.append('')
-        output.append(line)
+        try:
+            for k in keys:
+                if k in record:
+                    line.append(record[k])
+                else:
+                    line.append('')
+            output.append(line)
+        except:
+            output.append(['Error parsing line.'])
 
     writer = csv.writer(outfile, delimiter = ',',
                         quotechar = '"',
