@@ -18,7 +18,13 @@ In order to use this tool you'll need to create a file called `keys.json` in the
 }
 ```
 
-Once you've done that, invocation of the file
+Once you've done that, invocation of the pyscape-cli.py is as follows:
+
+```
+python pyscape-cli.py [input.txt] [output.csv]
+```
+
+...where input.txt is a text file with a list of URLs, one per line.
 
 ## Using the library in your project
 
